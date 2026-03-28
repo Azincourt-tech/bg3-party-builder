@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BG3 Party Builder — Builds & Guides</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">⚔️ BG3 Party Builder</h1>
+                <p class="subtitle">Baldur's Gate 3 — Builds & Guides Interativos</p>
+            </div>
+            <div class="header-actions">
+                <button id="theme-toggle" class="btn-icon" title="Alternar tema">
+                    <span class="icon-sun">☀️</span>
+                    <span class="icon-moon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Party Overview -->
+    <section class="party-overview">
+        <div class="container">
+            <h2 class="section-title">🎭 Sua Party</h2>
+            <div class="party-cards" id="party-cards">
+                <!-- Cards gerados via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Character Details -->
+    <section class="character-details">
+        <div class="container">
+            <div class="tabs" id="character-tabs">
+                <button class="tab active" data-character="tav">🏹 Tav (Arqueiro)</button>
+                <button class="tab" data-character="laezel">⚔️ Lae'zel</button>
+                <button class="tab" data-character="karlach">🔥 Karlach</button>
+                <button class="tab" data-character="shadowheart">✝️ Shadowheart</button>
+            </div>
+
+            <div class="tab-content" id="tab-content">
+                <!-- Conteúdo gerado via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Level Progression -->
+    <section class="progression">
+        <div class="container">
+            <h2 class="section-title">📈 Progressão por Nível</h2>
+            <div class="level-filter">
+                <label for="level-select">Nível:</label>
+                <input type="range" id="level-select" min="1" max="12" value="1">
+                <span id="level-display">1</span>
+            </div>
+            <div class="progression-content" id="progression-content">
+                <!-- Gerado via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Tips Section -->
+    <section class="tips">
+        <div class="container">
+            <h2 class="section-title">💡 Dicas de Combate</h2>
+            <div class="tips-grid" id="tips-grid">
+                <!-- Gerado via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Feito com ⚔️ por <a href="https://github.com/Morgana-Claw" target="_blank">Morgana</a></p>
+            <p class="footer-note">Baldur's Gate 3 é marca registrada da Larian Studios</p>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
