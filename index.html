@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BG3 Party Builder — Builds & Guides</title>
+    <title>BG3 Party Builder — Builds e Guia de Baldur's Gate 3</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +15,7 @@
         <div class="container">
             <div class="header-content">
                 <h1 class="logo">⚔️ BG3 Party Builder</h1>
-                <p class="subtitle">Baldur's Gate 3 — Builds & Guides Interativos</p>
+                <p class="subtitle">Baldur's Gate 3 — Builds e Guia Interativo</p>
             </div>
             <div class="header-actions">
                 <button id="theme-toggle" class="btn-icon" title="Alternar tema">
@@ -29,7 +29,7 @@
     <!-- Party Overview -->
     <section class="party-overview">
         <div class="container">
-            <h2 class="section-title">🎭 Sua Party</h2>
+            <h2 class="section-title">🎭 Sua Party Principal</h2>
             <div class="party-cards" id="party-cards">
                 <!-- Cards gerados via JS -->
             </div>
@@ -52,6 +52,26 @@
         </div>
     </section>
 
+    <!-- Other Companions -->
+    <section class="other-companions">
+        <div class="container">
+            <h2 class="section-title">👥 Outros Companheiros</h2>
+            <div class="tabs" id="other-tabs">
+                <button class="tab" data-companion="astarion">🗡️ Astarion</button>
+                <button class="tab" data-companion="gale">✨ Gale</button>
+                <button class="tab" data-companion="wyll">😈 Wyll</button>
+                <button class="tab" data-companion="halsin">🐻 Halsin</button>
+                <button class="tab" data-companion="minthara">⚖️ Minthara</button>
+                <button class="tab" data-companion="minsc">🐹 Minsc</button>
+                <button class="tab" data-companion="jaheira">🌿 Jaheira</button>
+            </div>
+
+            <div class="tab-content" id="companion-tab-content">
+                <p class="placeholder-text">Selecione um companheiro acima para ver a build recomendada.</p>
+            </div>
+        </div>
+    </section>
+
     <!-- Level Progression -->
     <section class="progression">
         <div class="container">
@@ -61,7 +81,14 @@
                 <input type="range" id="level-select" min="1" max="12" value="1">
                 <span id="level-display">1</span>
             </div>
+
+            <h3 class="subsection-title">🎭 Party Principal</h3>
             <div class="progression-content" id="progression-content">
+                <!-- Gerado via JS -->
+            </div>
+
+            <h3 class="subsection-title" style="margin-top: 24px;">👥 Outros Companheiros</h3>
+            <div class="progression-content" id="other-progression-content">
                 <!-- Gerado via JS -->
             </div>
         </div>
@@ -86,6 +113,7 @@
     </footer>
 
     <script src="js/data.js"></script>
+    <script src="js/companions.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
