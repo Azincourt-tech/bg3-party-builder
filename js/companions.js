@@ -287,7 +287,7 @@ const COMPANIONS = {
         },
         estiloLuta: 'N/A (Druid)',
         background: 'Soldier (Athletics + Intimidation)',
-        habilidadesChave: ['Natural Recovery', 'Circle Spells', "Nature's Ward", 'Land's Stride'],
+        habilidadesChave: ['Natural Recovery', 'Circle Spells', "Nature's Ward", "Land's Stride"],
         magias: ['Call Lightning', 'Spike Growth', 'Conjure Animals', 'Ice Storm', 'Wall of Thorns'],
         progressao: [
             { nivel: 1, classe: 'Druid', escolhas: 'Wild Shape, Spells: Healing Word, Thunderwave' },
