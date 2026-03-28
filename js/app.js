@@ -1,16 +1,19 @@
-// ===== BG3 Party Builder - Main App =====
+// ===== BG3 Party Builder - App Principal =====
 
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     renderPartyCards();
     renderTabContent('tav');
+    renderCompanionTabContent('astarion');
     renderProgression(1);
+    renderOtherProgression(1);
     renderTips();
     initTabs();
+    initCompanionTabs();
     initLevelSlider();
 });
 
-// ===== Theme Toggle =====
+// ===== Alternância de Tema =====
 function initTheme() {
     const toggle = document.getElementById('theme-toggle');
     const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -24,7 +27,7 @@ function initTheme() {
     });
 }
 
-// ===== Party Cards =====
+// ===== Cards da Party =====
 function renderPartyCards() {
     const container = document.getElementById('party-cards');
     container.innerHTML = '';
@@ -47,11 +50,14 @@ function renderPartyCards() {
     });
 }
 
-// ===== Tabs =====
+// ===== Abas da Party Principal =====
 function initTabs() {
-    const tabs = document.querySelectorAll('.tab');
+    const tabs = document.querySelectorAll('#character-tabs .tab');
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
+            // Desativa abas de companions
+            document.querySelectorAll('#other-tabs .tab').forEach(t => t.classList.remove('active'));
+            // Ativa aba da party
             tabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
             renderTabContent(tab.getAttribute('data-character'));
@@ -59,13 +65,80 @@ function initTabs() {
     });
 }
 
-// ===== Tab Content =====
+// ===== Abas dos Outros Companheiros =====
+function initCompanionTabs() {
+    const tabs = document.querySelectorAll('#other-tabs .tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Desativa abas da party
+            document.querySelectorAll('#character-tabs .tab').forEach(t => t.classList.remove('active'));
+            // Ativa aba do companion
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            renderCompanionTabContent(tab.getAttribute('data-companion'));
+        });
+    });
+}
+
+// ===== Conteúdo da Aba (Party Principal) =====
 function renderTabContent(characterId) {
     const char = CHARACTERS[characterId];
     if (!char) return;
 
     const container = document.getElementById('tab-content');
-    container.innerHTML = `
+    container.innerHTML = gerarBuildHTML(char);
+    animarContainer(container);
+}
+
+// ===== Conteúdo da Aba (Outros Companheiros) =====
+function renderCompanionTabContent(companionId) {
+    const char = COMPANIONS[companionId];
+    if (!char) return;
+
+    const container = document.getElementById('companion-tab-content');
+    container.innerHTML = gerarBuildHTML(char);
+    animarContainer(container);
+}
+
+// ===== Gerador de HTML de Build =====
+function gerarBuildHTML(char) {
+    // Suporta ambos os formatos (party principal e companions)
+    const estilo = char.fightingStyle || char.estiloLuta || 'N/A';
+    const bg = char.background;
+    const habilidades = char.keyAbilities || char.habilidadesChave || [];
+    const spells = char.spells || char.magias || [];
+    const prog = char.progression || char.progressao || [];
+    const comboList = char.combo || [];
+    const equip = char.equipment || char.equipamentos || [];
+
+    // Suporta stats em inglês e português
+    const statsHTML = Object.entries(char.stats).map(([stat, value]) => `
+        <div class="stat-box">
+            <div class="label">${stat}</div>
+            <div class="value">${value}</div>
+            <div class="modifier">${getModifier(value)}</div>
+        </div>
+    `).join('');
+
+    // Progressão
+    const progHTML = prog.map(p => {
+        const lv = p.level || p.nivel;
+        const cls = p.class || p.classe;
+        const choices = p.choices || p.escolhas;
+        return `
+            <li>
+                <strong>Nível ${lv} (${cls}):</strong> ${choices}
+            </li>
+        `;
+    }).join('');
+
+    // Equipamentos
+    const equipHTML = equip.map(e => {
+        const nome = e.name || e.nome;
+        return `<li><strong>${nome}</strong> — ${e.note || e.nota}</li>`;
+    }).join('');
+
+    return `
         <div class="build-header">
             <div class="emoji">${char.emoji}</div>
             <div>
@@ -80,97 +153,116 @@ function renderTabContent(characterId) {
         </p>
 
         <div class="stats-grid">
-            ${Object.entries(char.stats).map(([stat, value]) => `
-                <div class="stat-box">
-                    <div class="label">${stat}</div>
-                    <div class="value">${value}</div>
-                    <div class="modifier">${getModifier(value)}</div>
-                </div>
-            `).join('')}
+            ${statsHTML}
         </div>
 
         <div class="build-section">
             <h4>⚔️ Estilo de Luta / Background</h4>
             <ul>
-                <li><strong>Estilo:</strong> ${char.fightingStyle}</li>
-                <li><strong>Background:</strong> ${char.background}</li>
+                <li><strong>Estilo:</strong> ${estilo}</li>
+                <li><strong>Background:</strong> ${bg}</li>
             </ul>
         </div>
 
         <div class="build-section">
             <h4>⭐ Habilidades Chave</h4>
             <ul>
-                ${char.keyAbilities.map(a => `<li>${a}</li>`).join('')}
+                ${habilidades.map(a => `<li>${a}</li>`).join('')}
             </ul>
         </div>
 
-        ${char.spells.length > 0 ? `
+        ${spells.length > 0 ? `
         <div class="build-section">
-            <h4>✨ Spells Importantes</h4>
+            <h4>✨ Magias Importantes</h4>
             <ul>
-                ${char.spells.map(s => `<li>${s}</li>`).join('')}
+                ${spells.map(s => `<li>${s}</li>`).join('')}
             </ul>
         </div>
         ` : ''}
 
         <div class="build-section">
+            <h4>📈 Progressão por Nível</h4>
+            <ul>
+                ${progHTML}
+            </ul>
+        </div>
+
+        <div class="build-section">
             <h4>💥 Combo de Combate</h4>
             <ul>
-                ${char.combo.map(c => `<li>${c}</li>`).join('')}
+                ${comboList.map(c => `<li>${c}</li>`).join('')}
             </ul>
         </div>
 
         <div class="build-section">
             <h4>🎒 Equipamentos Recomendados</h4>
             <ul>
-                ${char.equipment.map(e => `<li><strong>${e.name}</strong> — ${e.note}</li>`).join('')}
+                ${equipHTML}
             </ul>
         </div>
     `;
-
-    container.style.animation = 'none';
-    container.offsetHeight; // trigger reflow
-    container.style.animation = 'fadeIn 0.3s ease';
 }
 
-// ===== Level Slider =====
+// ===== Slider de Nível =====
 function initLevelSlider() {
     const slider = document.getElementById('level-select');
     const display = document.getElementById('level-display');
 
     slider.addEventListener('input', () => {
-        const level = parseInt(slider.value);
-        display.textContent = level;
-        renderProgression(level);
+        const nivel = parseInt(slider.value);
+        display.textContent = nivel;
+        renderProgression(nivel);
+        renderOtherProgression(nivel);
     });
 }
 
-// ===== Progression =====
-function renderProgression(level) {
+// ===== Progressão da Party Principal =====
+function renderProgression(nivel) {
     const container = document.getElementById('progression-content');
     container.innerHTML = '';
 
     Object.values(CHARACTERS).forEach(char => {
         const info = getLevelSummary(char.id);
-        const summary = info[level] || '—';
+        const resumo = info[nivel] || '—';
 
         const div = document.createElement('div');
         div.className = 'progression-character';
         div.innerHTML = `
             <h4>${char.emoji} ${char.name}</h4>
-            <div class="level-info ${summary.startsWith('⭐') ? 'highlight' : ''}">
-                ${summary}
+            <div class="level-info ${resumo.startsWith('⭐') ? 'highlight' : ''}">
+                ${resumo}
             </div>
         `;
         container.appendChild(div);
     });
 
-    container.style.animation = 'none';
-    container.offsetHeight;
-    container.style.animation = 'fadeIn 0.3s ease';
+    animarContainer(container);
 }
 
-// ===== Tips =====
+// ===== Progressão dos Outros Companheiros =====
+function renderOtherProgression(nivel) {
+    const container = document.getElementById('other-progression-content');
+    container.innerHTML = '';
+
+    Object.values(COMPANIONS).forEach(char => {
+        const info = getCompanionLevelSummary(char.id);
+        const resumo = info[nivel] || '—';
+
+        const div = document.createElement('div');
+        div.className = 'progression-character';
+        div.innerHTML = `
+            <h4>${char.emoji} ${char.name}</h4>
+            <div class="level-info ${resumo.startsWith('⭐') ? 'highlight' : ''}">
+                ${resumo}
+            </div>
+        `;
+        container.appendChild(div);
+    });
+
+    animarContainer(container);
+}
+
+// ===== Dicas =====
 function renderTips() {
     const container = document.getElementById('tips-grid');
     container.innerHTML = '';
@@ -187,8 +279,14 @@ function renderTips() {
     });
 }
 
-// ===== Helpers =====
+// ===== Utilitários =====
 function getModifier(score) {
     const mod = Math.floor((score - 10) / 2);
     return mod >= 0 ? `+${mod}` : `${mod}`;
+}
+
+function animarContainer(container) {
+    container.style.animation = 'none';
+    container.offsetHeight; // trigger reflow
+    container.style.animation = 'fadeIn 0.3s ease';
 }
