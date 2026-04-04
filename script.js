@@ -11,6 +11,7 @@ let allCharacters = []       // todos os personagens do JSON
 let playerCharId  = 'tav'    // personagem principal fixo
 let partySlots    = ['laezel','karlach','shadowheart']  // 3 slots selecionáveis
 let progress      = {}       // { charId: { levelNum: bool } }
+let phaseState    = {}       // { charId: { phaseId: bool } } - Estado manual das abas
 let pickerTargetSlot = null  // qual slot está sendo editado (0, 1 ou 2)
 
 // ════════════════════════════════════════════════════════════
@@ -22,14 +23,17 @@ const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)]
 function saveProgress() {
   localStorage.setItem('bg3_progress', JSON.stringify(progress))
   localStorage.setItem('bg3_party', JSON.stringify(partySlots))
+  localStorage.setItem('bg3_phase_state', JSON.stringify(phaseState))
 }
 
 function loadSaved() {
   try {
     const p = localStorage.getItem('bg3_progress')
     const s = localStorage.getItem('bg3_party')
+    const f = localStorage.getItem('bg3_phase_state')
     if (p) progress   = JSON.parse(p)
     if (s) partySlots = JSON.parse(s)
+    if (f) phaseState = JSON.parse(f)
   } catch (_) {}
 }
 
@@ -130,6 +134,26 @@ function openPicker(slotIndex) {
   const available = allCharacters.filter(c => c.id !== playerCharId)
 
   grid.innerHTML = ''
+
+  // Opção de limpar slot (apenas para slots não-fixos)
+  if (partySlots[slotIndex]) {
+    const clearCard = document.createElement('button')
+    clearCard.className = 'picker-card'
+    clearCard.innerHTML = `
+      <span class="picker-icon">🚫</span>
+      <span class="picker-name">Remover</span>
+      <span class="picker-class">Limpar slot</span>
+    `
+    clearCard.addEventListener('click', () => {
+      partySlots[slotIndex] = null
+      closePicker()
+      saveProgress()
+      renderAll()
+      showToast(`Slot ${slotIndex + 1} limpo`)
+    })
+    grid.appendChild(clearCard)
+  }
+
   available.forEach((char, i) => {
     const inParty = partySlots.includes(char.id) && partySlots.indexOf(char.id) !== slotIndex
     const selected = partySlots[slotIndex] === char.id
@@ -138,7 +162,7 @@ function openPicker(slotIndex) {
     card.className = 'picker-card' +
       (selected  ? ' selected'  : '') +
       (inParty   ? ' in-party'  : '')
-    card.style.animationDelay = (i * 30) + 'ms'
+    card.style.animationDelay = ((i + 1) * 30) + 'ms'
     card.setAttribute('aria-label', char.name)
     card.innerHTML = `
       <span class="picker-icon">${char.icon}</span>
@@ -151,7 +175,7 @@ function openPicker(slotIndex) {
       closePicker()
       saveProgress()
       renderAll()
-      showToast(`${char.icon} ${char.name} adicionado(a) à party!`)
+      showToast(`${char.icon} ${char.name} adicionado(a)!`)
     })
     grid.appendChild(card)
   })
@@ -168,12 +192,15 @@ function closePicker() {
 // ════════════════════════════════════════════════════════════
 // Renderizar coluna de personagem
 // ════════════════════════════════════════════════════════════
-function renderCharCol(char, colIndex) {
-  if (!char) return renderEmptyCol(colIndex)
+function renderCharCol(char, dataIndex, isTav = false) {
+  if (!char) return renderEmptyCol(dataIndex)
 
   const { done, total, pct } = charProgress(char)
   const nxt = nextLevel(char)
   const prog = progress[char.id] || {}
+
+  // Índice visual: Tav sempre 0, Companions 1, 2, 3
+  const visualIndex = isTav ? 0 : dataIndex + 1
 
   // Circumference do mini ring (r=22)
   const r = 22
@@ -182,7 +209,7 @@ function renderCharCol(char, colIndex) {
 
   const col = document.createElement('div')
   col.className = 'char-col'
-  col.style.animationDelay = (colIndex * 60) + 'ms'
+  col.style.animationDelay = (visualIndex * 60) + 'ms'
   col.dataset.charId = char.id
 
   // ── Header ──
@@ -228,7 +255,6 @@ function renderCharCol(char, colIndex) {
     const phaseEl = document.createElement('div')
     phaseEl.className = 'col-phase'
     phaseEl.dataset.phase = phase.tag || ''
-    if (phaseDone === phaseTotal && phaseTotal > 0) phaseEl.classList.add('collapsed')
 
     phaseEl.innerHTML = `
       <div class="col-phase-header" role="button" aria-expanded="true" tabindex="0">
@@ -244,9 +270,25 @@ function renderCharCol(char, colIndex) {
 
     // Collapse toggle
     const phaseHeader = phaseEl.querySelector('.col-phase-header')
+    
+    // Recupera estado salvo ou usa o default (auto-collapse se completo)
+    const charPhaseState = phaseState[char.id] || {}
+    const phaseId = phase.tag || phase.label
+    const isManuallySet = charPhaseState.hasOwnProperty(phaseId)
+    
+    if (isManuallySet) {
+      if (charPhaseState[phaseId]) phaseEl.classList.add('collapsed')
+      else phaseEl.classList.remove('collapsed')
+    } else if (phaseDone === phaseTotal && phaseTotal > 0) {
+      phaseEl.classList.add('collapsed')
+    }
+
     phaseHeader.addEventListener('click', () => {
-      phaseEl.classList.toggle('collapsed')
-      phaseHeader.setAttribute('aria-expanded', !phaseEl.classList.contains('collapsed'))
+      const isNowCollapsed = phaseEl.classList.toggle('collapsed')
+      if (!phaseState[char.id]) phaseState[char.id] = {}
+      phaseState[char.id][phaseId] = isNowCollapsed
+      saveProgress()
+      phaseHeader.setAttribute('aria-expanded', !isNowCollapsed)
     })
     phaseHeader.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); phaseHeader.click() }})
 
@@ -333,9 +375,10 @@ function renderCharCol(char, colIndex) {
 
 // ── Coluna vazia (slot sem personagem selecionado)
 function renderEmptyCol(slotIndex) {
+  const visualIndex = slotIndex + 1
   const col = document.createElement('div')
   col.className = 'empty-col'
-  col.style.animationDelay = ((slotIndex + 1) * 60) + 'ms'
+  col.style.animationDelay = (visualIndex * 60) + 'ms'
   col.innerHTML = `
     <span class="empty-col-icon">⚔️</span>
     <span class="empty-col-text">Slot vazio</span>
@@ -352,23 +395,30 @@ function renderAll() {
   renderPartyBar()
 
   const main = $('#mainContent')
-  main.innerHTML = ''
-
   const grid = document.createElement('div')
   grid.className = 'party-grid'
 
-  // Slot 0 = Tav (fixo)
+  // Slot principal: Tav (sempre fixo)
   const tavChar = getChar(playerCharId)
-  grid.appendChild(renderCharCol(tavChar, 0))
+  grid.appendChild(renderCharCol(tavChar, -1, true))
 
-  // Slots 1-3
+  // Slots 1-3: Companions
   ;[0,1,2].forEach(i => {
     const id   = partySlots[i]
     const char = id ? getChar(id) : null
-    grid.appendChild(renderCharCol(char, i + 1))
+    grid.appendChild(renderCharCol(char, i, false))
   })
 
-  main.appendChild(grid)
+  // Evita 'piscada' substituindo o conteúdo de uma vez
+  const oldGrid = main.querySelector('.party-grid')
+  const oldEmpty = main.querySelector('.empty-col')
+  
+  if (oldGrid) {
+    main.replaceChild(grid, oldGrid)
+  } else {
+    main.innerHTML = ''
+    main.appendChild(grid)
+  }
 }
 
 // ════════════════════════════════════════════════════════════

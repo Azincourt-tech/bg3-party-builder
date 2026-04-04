@@ -51,6 +51,7 @@
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, .4);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, .5);
   --shadow-lg: 0 12px 40px rgba(0, 0, 0, .6);
+  --surface-glass: rgba(20, 19, 16, 0.85);
 }
 
 [data-theme="light"] {
@@ -71,6 +72,7 @@
   --shadow-sm: 0 1px 3px rgba(60, 40, 0, .10);
   --shadow-md: 0 4px 16px rgba(60, 40, 0, .12);
   --shadow-lg: 0 12px 40px rgba(60, 40, 0, .16);
+  --surface-glass: rgba(250, 246, 238, 0.82);
 }
 
 *,
@@ -94,8 +96,29 @@ body {
   color: var(--text);
   background-color: var(--bg);
   background-image:
-    radial-gradient(ellipse 80% 40% at 50% -5%, rgba(201, 168, 76, .04) 0%, transparent 60%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M0 30L30 0L60 30L30 60Z' fill='none' stroke='rgba(201,168,76,0.015)' stroke-width='1'/%3E%3C/svg%3E");
+    radial-gradient(ellipse 80% 40% at 50% -5%, rgba(201, 168, 76, .08) 0%, transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M0 30L30 0L60 30L30 60Z' fill='none' stroke='rgba(201,168,76,0.02)' stroke-width='1'/%3E%3C/svg%3E");
+  scrollbar-gutter: stable;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-4);
+  border: 2px solid var(--bg);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-faint);
 }
 
 img {
@@ -148,6 +171,9 @@ button,
   top: 0;
   z-index: 200;
   background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: var(--surface-glass);
   border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow-md);
 }
@@ -173,6 +199,16 @@ button,
   height: 36px;
   color: var(--text-muted);
   flex-shrink: 0;
+  filter: drop-shadow(0 0 8px var(--accent-glow));
+}
+
+.logo polygon:nth-child(2) {
+  animation: logoPulse 3s infinite ease-in-out;
+}
+
+@keyframes logoPulse {
+  0%, 100% { opacity: 0.8; stroke-width: 1.5; }
+  50% { opacity: 1; stroke-width: 2; filter: drop-shadow(0 0 4px var(--accent)); }
 }
 
 .brand-title {
@@ -217,9 +253,12 @@ button,
 /* ── Party Bar ───────────────────────────────────────────── */
 .party-bar {
   position: sticky;
-  top: 52px;
+  top: 62px;
   z-index: 150;
   background: var(--surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: var(--surface-glass);
   border-bottom: 2px solid var(--border);
   box-shadow: var(--shadow-sm);
 }
@@ -782,11 +821,13 @@ button,
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   overflow: hidden;
-  transition: border-color var(--transition), box-shadow var(--transition);
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
 }
 
 .lcard:hover {
-  border-color: rgba(201, 168, 76, .15);
+  border-color: rgba(201, 168, 76, .3);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .lcard.done {
@@ -796,7 +837,7 @@ button,
 
 .lcard.next-target {
   border-color: var(--char-color, var(--accent));
-  box-shadow: 0 0 0 1px var(--char-color, var(--accent)), 0 0 14px rgba(201, 168, 76, .15);
+  box-shadow: 0 0 0 1px var(--char-color, var(--accent)), 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 14px rgba(201, 168, 76, .15);
 }
 
 .lcard-top {
