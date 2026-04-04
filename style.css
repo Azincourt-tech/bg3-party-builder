@@ -695,6 +695,11 @@ a, button, [role="button"] {
   margin-bottom: var(--space-3);
 }
 
+.card-header-row {
+  display: flex;
+  gap: var(--space-2);
+}
+
 .card-level-num {
   font-family: var(--font-display);
   font-size: var(--text-lg);

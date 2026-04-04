@@ -383,7 +383,7 @@ function buildLevelCard(char, lvl) {
     <div class="card-stripe"></div>
     <div class="card-inner">
       <div class="card-header">
-        <div>
+        <div class="card-header-row">
           <div class="card-level-num" style="color:${char.color}">Nível ${lvl.level}</div>
           <span class="card-next-badge">PRÓXIMO</span>
         </div>
