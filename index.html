@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
-  <!-- Header -->
+  <!-- Site Header -->
   <header class="site-header">
     <div class="header-inner">
       <div class="header-brand">
@@ -26,11 +26,11 @@
         </svg>
         <div>
           <h1 class="brand-title">BG3 Build Tracker</h1>
-          <p class="brand-sub">Baldur's Gate 3 — Guia de Progressão</p>
+          <p class="brand-sub">Baldur's Gate 3 — Guia de Progressão da Party</p>
         </div>
       </div>
       <div class="header-controls">
-        <button class="btn-icon" id="resetBtn" title="Resetar todo o progresso" aria-label="Resetar progresso">
+        <button class="btn-icon" id="resetBtn" title="Resetar progresso" aria-label="Resetar progresso">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
         <button class="btn-icon" data-theme-toggle aria-label="Alternar tema">
@@ -40,11 +40,74 @@
     </div>
   </header>
 
-  <!-- Character Tabs -->
-  <nav class="char-nav" id="charNav" role="tablist" aria-label="Personagens"></nav>
+  <!-- Party Picker Bar -->
+  <div class="party-bar" id="partyBar">
+    <div class="party-bar-inner">
+      <!-- Slot Tav (fixo) -->
+      <div class="party-slot fixed" id="slotTav">
+        <div class="slot-avatar" id="slotTavAvatar"></div>
+        <div class="slot-info">
+          <span class="slot-name" id="slotTavName">Tav</span>
+          <span class="slot-role" id="slotTavRole">Seu personagem</span>
+        </div>
+        <span class="slot-badge fixed-badge">PRINCIPAL</span>
+      </div>
 
-  <!-- Main Content -->
-  <main id="mainContent" class="main-content"></main>
+      <div class="party-divider">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+
+      <!-- Slots 1, 2, 3 selecionáveis -->
+      <div class="party-slot selectable" id="slot1" data-slot="0">
+        <div class="slot-avatar" id="slot1Avatar"></div>
+        <div class="slot-info">
+          <span class="slot-name" id="slot1Name">—</span>
+          <span class="slot-role" id="slot1Role">Clique para escolher</span>
+        </div>
+      </div>
+      <div class="party-slot selectable" id="slot2" data-slot="1">
+        <div class="slot-avatar" id="slot2Avatar"></div>
+        <div class="slot-info">
+          <span class="slot-name" id="slot2Name">—</span>
+          <span class="slot-role" id="slot2Role">Clique para escolher</span>
+        </div>
+      </div>
+      <div class="party-slot selectable" id="slot3" data-slot="2">
+        <div class="slot-avatar" id="slot3Avatar"></div>
+        <div class="slot-info">
+          <span class="slot-name" id="slot3Name">—</span>
+          <span class="slot-role" id="slot3Role">Clique para escolher</span>
+        </div>
+      </div>
+
+      <!-- Progresso geral da party -->
+      <div class="party-progress">
+        <div class="party-progress-label">Party</div>
+        <div class="party-progress-bar-wrap">
+          <div class="party-progress-bar">
+            <div class="party-progress-fill" id="partyProgressFill"></div>
+          </div>
+          <span class="party-progress-pct" id="partyProgressPct">0%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Picker Modal -->
+  <div class="picker-overlay" id="pickerOverlay" hidden>
+    <div class="picker-modal" role="dialog" aria-modal="true" aria-label="Selecionar companheiro">
+      <div class="picker-header">
+        <h2 class="picker-title">Escolher Companheiro</h2>
+        <button class="btn-icon" id="pickerClose" aria-label="Fechar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="picker-grid" id="pickerGrid"></div>
+    </div>
+  </div>
+
+  <!-- Main: 4 colunas de party -->
+  <main class="main-content" id="mainContent"></main>
 
   <!-- Toast -->
   <div class="toast" id="toast" role="alert" aria-live="polite"></div>

@@ -1,626 +1,449 @@
-/* ════════════════════════════════════════════════════════════
-   BG3 Build Tracker — script.js
-   Renderiza UI a partir de builds.json, salva progresso
-   no localStorage e gerencia toda a interatividade.
-   ════════════════════════════════════════════════════════════ */
+/**
+ * BG3 Build Tracker — script.js
+ * Tav = fixo (slot 0), slots 1-2-3 = companheiros selecionáveis.
+ * Ao selecionar/trocar um companion, a coluna atualiza em tempo real.
+ */
 
-// ── Estado global ──────────────────────────────────────────
-const STATE = {
-  builds:          null,   // dados do builds.json
-  activeCharId:    null,   // personagem ativo
-  progress:        {},     // { charId: Set<level> }
-  collapsed:       {},     // { charId_phaseIdx: bool }
-  filter:          'all',  // filtro ativo
-  search:          '',     // texto de busca
-  STORAGE_KEY:     'bg3tracker_v1'
-}
+// ════════════════════════════════════════════════════════════
+// Estado global
+// ════════════════════════════════════════════════════════════
+let allCharacters = []       // todos os personagens do JSON
+let playerCharId  = 'tav'    // personagem principal fixo
+let partySlots    = ['laezel','karlach','shadowheart']  // 3 slots selecionáveis
+let progress      = {}       // { charId: { levelNum: bool } }
+let pickerTargetSlot = null  // qual slot está sendo editado (0, 1 ou 2)
 
-// ── Utilitários ────────────────────────────────────────────
-const $ = id => document.getElementById(id)
-const el = (tag, cls, html) => {
-  const e = document.createElement(tag)
-  if (cls) e.className = cls
-  if (html !== undefined) e.innerHTML = html
-  return e
-}
+// ════════════════════════════════════════════════════════════
+// Utilitários
+// ════════════════════════════════════════════════════════════
+const $ = (sel, ctx = document) => ctx.querySelector(sel)
+const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)]
 
-/** Persistência no localStorage */
 function saveProgress() {
-  try {
-    const data = {}
-    for (const [id, set] of Object.entries(STATE.progress)) {
-      data[id] = [...set]
-    }
-    localStorage.setItem(STATE.STORAGE_KEY, JSON.stringify({
-      progress:  data,
-      collapsed: STATE.collapsed,
-      activeId:  STATE.activeCharId
-    }))
-  } catch (_) { /* iframe sandbox may block — graceful fail */ }
+  localStorage.setItem('bg3_progress', JSON.stringify(progress))
+  localStorage.setItem('bg3_party', JSON.stringify(partySlots))
 }
 
-function loadProgress() {
+function loadSaved() {
   try {
-    const raw = localStorage.getItem(STATE.STORAGE_KEY)
-    if (!raw) return
-    const saved = JSON.parse(raw)
-    if (saved.progress) {
-      for (const [id, arr] of Object.entries(saved.progress)) {
-        STATE.progress[id] = new Set(arr)
-      }
-    }
-    if (saved.collapsed) STATE.collapsed = saved.collapsed
-    if (saved.activeId)  STATE.activeCharId = saved.activeId
+    const p = localStorage.getItem('bg3_progress')
+    const s = localStorage.getItem('bg3_party')
+    if (p) progress   = JSON.parse(p)
+    if (s) partySlots = JSON.parse(s)
   } catch (_) {}
 }
 
-/** Exibe toast flutuante */
-function showToast(msg) {
-  const t = $('toast')
+function getChar(id) {
+  return allCharacters.find(c => c.id === id) || null
+}
+
+function charProgress(char) {
+  if (!char) return { done: 0, total: 0, pct: 0 }
+  const prog = progress[char.id] || {}
+  const levels = char.phases.flatMap(p => p.levels)
+  const total = levels.length
+  const done  = levels.filter(l => prog[l.level]).length
+  return { done, total, pct: total ? Math.round(done / total * 100) : 0 }
+}
+
+function partyPct() {
+  const ids = [playerCharId, ...partySlots].filter(Boolean)
+  const chars = ids.map(getChar).filter(Boolean)
+  if (!chars.length) return 0
+  const totals = chars.map(c => charProgress(c))
+  const sumDone  = totals.reduce((a, b) => a + b.done,  0)
+  const sumTotal = totals.reduce((a, b) => a + b.total, 0)
+  return sumTotal ? Math.round(sumDone / sumTotal * 100) : 0
+}
+
+function nextLevel(char) {
+  if (!char) return null
+  const prog = progress[char.id] || {}
+  const levels = char.phases.flatMap(p => p.levels)
+  const nxt = levels.find(l => !prog[l.level])
+  return nxt ? nxt.level : null
+}
+
+function showToast(msg, duration = 2200) {
+  const t = $('#toast')
   t.textContent = msg
   t.classList.add('visible')
-  clearTimeout(t._timer)
-  t._timer = setTimeout(() => t.classList.remove('visible'), 2200)
+  setTimeout(() => t.classList.remove('visible'), duration)
 }
 
-/** Calcula progresso de um personagem (%) */
-function calcProgress(charId) {
-  const char = STATE.builds.characters.find(c => c.id === charId)
-  if (!char) return { done: 0, total: 0, pct: 0 }
-  const levels = char.phases.flatMap(p => p.levels)
-  const done   = levels.filter(l => STATE.progress[charId]?.has(l.level)).length
-  return { done, total: levels.length, pct: Math.round((done / levels.length) * 100) }
-}
-
-// ── Tema ───────────────────────────────────────────────────
-function initTheme() {
-  const btn = document.querySelector('[data-theme-toggle]')
-  const html = document.documentElement
-  let theme = 'dark'
-  try {
-    const stored = localStorage.getItem('bg3tracker_theme')
-    theme = stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-  } catch (_) {}
-  html.setAttribute('data-theme', theme)
-  updateThemeIcon(btn, theme)
-  btn.addEventListener('click', () => {
-    theme = theme === 'dark' ? 'light' : 'dark'
-    html.setAttribute('data-theme', theme)
-    updateThemeIcon(btn, theme)
-    try { localStorage.setItem('bg3tracker_theme', theme) } catch (_) {}
-  })
-}
-
-function updateThemeIcon(btn, theme) {
-  btn.innerHTML = theme === 'dark'
-    ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`
-    : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`
-  btn.setAttribute('aria-label', `Mudar para tema ${theme === 'dark' ? 'claro' : 'escuro'}`)
-}
-
-// ── Inicialização ──────────────────────────────────────────
-async function init() {
-  initTheme()
-  loadProgress()
-
-  try {
-    const res  = await fetch('./builds.json')
-    STATE.builds = await res.json()
-  } catch (e) {
-    document.body.innerHTML = `<p style="padding:2rem;color:#e08080">Erro ao carregar builds.json: ${e.message}</p>`
-    return
+// ════════════════════════════════════════════════════════════
+// Party Bar — atualiza os 4 slots visuais no topo
+// ════════════════════════════════════════════════════════════
+function renderPartyBar() {
+  // Tav (fixo)
+  const tav = getChar(playerCharId)
+  if (tav) {
+    $('#slotTavAvatar').textContent = tav.icon
+    $('#slotTavName').textContent   = tav.name
+    $('#slotTavRole').textContent   = tav.class + ' • ' + tav.role
+    $('#slotTav').style.setProperty('--char-color', tav.color)
+    const { pct } = charProgress(tav)
+    $('#slotTavName').title = `${pct}% completo`
   }
 
-  // Garante Sets de progresso para todos os personagens
-  STATE.builds.characters.forEach(c => {
-    if (!STATE.progress[c.id]) STATE.progress[c.id] = new Set()
-  })
+  // Slots 1-3
+  ;[0,1,2].forEach(i => {
+    const slotEl   = $(`#slot${i+1}`)
+    const avatarEl = $(`#slot${i+1}Avatar`)
+    const nameEl   = $(`#slot${i+1}Name`)
+    const roleEl   = $(`#slot${i+1}Role`)
+    const id       = partySlots[i]
+    const char     = id ? getChar(id) : null
 
-  // Define ativo
-  const validId = STATE.builds.characters.find(c => c.id === STATE.activeCharId)
-  STATE.activeCharId = validId ? STATE.activeCharId : STATE.builds.characters[0].id
-
-  renderNav()
-  renderMain()
-  bindGlobal()
-}
-
-// ── Nav de Personagens ────────────────────────────────────
-function renderNav() {
-  const nav   = $('charNav')
-  const inner = el('div', 'char-nav-inner')
-  nav.innerHTML = ''
-
-  // Tabs dos personagens principais
-  STATE.builds.characters.forEach(char => {
-    const { pct, done, total } = calcProgress(char.id)
-    const tab = el('button', `char-tab${char.id === STATE.activeCharId ? ' active' : ''}`)
-    tab.setAttribute('role', 'tab')
-    tab.setAttribute('aria-selected', char.id === STATE.activeCharId)
-    tab.innerHTML = `
-      <span class="char-tab-icon">${char.icon}</span>
-      <span class="char-tab-name">${char.name}</span>
-      <span class="tab-progress-pill">${pct}%</span>`
-    tab.addEventListener('click', () => setActiveChar(char.id))
-    inner.appendChild(tab)
-  })
-
-  // Separador para companheiros
-  const sep = el('div', 'companion-divider', '|')
-  inner.appendChild(sep)
-
-  // Aba companheiros
-  const compTab = el('button', `char-tab${STATE.activeCharId === '__companions' ? ' active' : ''}`)
-  compTab.innerHTML = `<span class="char-tab-icon">👥</span><span class="char-tab-name">Companheiros</span>`
-  compTab.addEventListener('click', () => setActiveChar('__companions'))
-  inner.appendChild(compTab)
-
-  nav.appendChild(inner)
-}
-
-function setActiveChar(id) {
-  STATE.activeCharId = id
-  STATE.filter = 'all'
-  STATE.search = ''
-  saveProgress()
-  renderNav()
-  renderMain()
-}
-
-// ── Conteúdo Principal ─────────────────────────────────────
-function renderMain() {
-  const main = $('mainContent')
-  main.innerHTML = ''
-  if (STATE.activeCharId === '__companions') {
-    main.appendChild(renderCompanions())
-    return
-  }
-  const char = STATE.builds.characters.find(c => c.id === STATE.activeCharId)
-  if (!char) return
-  main.appendChild(renderCharHeader(char))
-  main.appendChild(renderStatsBar(char))
-  main.appendChild(renderControlsBar(char))
-  char.phases.forEach((phase, idx) => {
-    main.appendChild(renderPhase(char, phase, idx))
-  })
-  main.appendChild(renderInfoGrid(char))
-}
-
-// ── Header do Personagem ───────────────────────────────────
-function renderCharHeader(char) {
-  const { done, total, pct } = calcProgress(char.id)
-  const wrap = el('div', 'char-header')
-  wrap.style.setProperty('--char-color', char.color)
-
-  const r = 42, circ = 2 * Math.PI * r
-  const offset = circ - (pct / 100) * circ
-
-  wrap.innerHTML = `
-    <div class="char-header-left">
-      <div class="char-name-row">
-        <span class="char-icon-big">${char.icon}</span>
-        <h2 class="char-name">${char.name}</h2>
-      </div>
-      <div class="char-class-badge">
-        <span>${char.class}</span>
-        <span class="class-separator">·</span>
-        <span>${char.subclass}</span>
-        <span class="class-separator">·</span>
-        <span>${char.race}</span>
-      </div>
-      <p class="char-description">${char.description}</p>
-      <div class="char-tags">
-        <span class="tag accent">${char.role}</span>
-        <span class="tag">🗡 ${char.primaryDamage}</span>
-        <span class="tag">⚡ ${char.primaryAttribute}</span>
-      </div>
-    </div>
-    <div class="char-progress-ring">
-      <div class="ring-wrap">
-        <svg class="ring-svg" width="100" height="100" viewBox="0 0 100 100">
-          <circle class="ring-track" cx="50" cy="50" r="${r}"/>
-          <circle class="ring-fill" cx="50" cy="50" r="${r}"
-            stroke="${char.color}"
-            stroke-dasharray="${circ}"
-            stroke-dashoffset="${offset}"/>
-        </svg>
-        <div class="ring-label">
-          <span class="ring-pct">${pct}%</span>
-          <span class="ring-caption">completo</span>
-        </div>
-      </div>
-      <p class="ring-text">${done} / ${total} níveis</p>
-    </div>`
-  return wrap
-}
-
-// ── Stats Bar ──────────────────────────────────────────────
-function renderStatsBar(char) {
-  const bar  = el('div', 'stats-bar')
-  const stats = char.baseStats
-  const labels = { FOR: '💪 FOR', DES: '🏹 DES', CON: '🛡 CON', INT: '📚 INT', SAB: '👁 SAB', CAR: '💬 CAR' }
-  for (const [key, val] of Object.entries(stats)) {
-    const chip = el('div', 'stat-chip')
-    chip.innerHTML = `<span class="stat-chip-label">${labels[key]}</span><span class="stat-chip-value">${val}</span>`
-    bar.appendChild(chip)
-  }
-  return bar
-}
-
-// ── Barra de controles ─────────────────────────────────────
-function renderControlsBar(char) {
-  const bar = el('div', 'controls-bar')
-
-  // Busca
-  const searchWrap = el('div', 'search-wrap')
-  searchWrap.innerHTML = `
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-    </svg>
-    <input class="search-input" type="text" id="searchInput" placeholder="Buscar skill, talent, tip…" value="${STATE.search}">`
-  bar.appendChild(searchWrap)
-
-  // Filtros
-  const filters = [
-    { key: 'all',       label: 'Todos' },
-    { key: 'talent',    label: '⭐ Talents' },
-    { key: 'skill',     label: '✨ Skills' },
-    { key: 'pending',   label: '⏳ Pendentes' },
-    { key: 'done',      label: '✅ Feitos' }
-  ]
-  const pills = el('div', 'filter-pills')
-  filters.forEach(f => {
-    const p = el('button', `filter-pill${STATE.filter === f.key ? ' active' : ''}`)
-    p.textContent = f.label
-    p.addEventListener('click', () => {
-      STATE.filter = f.key
-      updateCards(char)
-      pills.querySelectorAll('.filter-pill').forEach(x => x.classList.remove('active'))
-      p.classList.add('active')
-    })
-    pills.appendChild(p)
-  })
-  bar.appendChild(pills)
-
-  // Botão próximo nível
-  const nextBtn = el('button', 'next-btn')
-  nextBtn.innerHTML = `
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-    Próximo Nível`
-  nextBtn.addEventListener('click', () => scrollToNext(char))
-  bar.appendChild(nextBtn)
-
-  // Bind busca
-  setTimeout(() => {
-    const inp = $('searchInput')
-    if (inp) inp.addEventListener('input', e => {
-      STATE.search = e.target.value.toLowerCase()
-      updateCards(char)
-    })
-  }, 0)
-
-  return bar
-}
-
-// ── Phase Section ──────────────────────────────────────────
-function renderPhase(char, phase, phaseIdx) {
-  const collapseKey = `${char.id}_${phaseIdx}`
-  const isCollapsed = STATE.collapsed[collapseKey] ?? false
-
-  const done  = phase.levels.filter(l => STATE.progress[char.id]?.has(l.level)).length
-  const total = phase.levels.length
-  const pct   = total ? Math.round((done / total) * 100) : 0
-
-  const section = el('div', `phase-section${isCollapsed ? ' collapsed' : ''}`)
-
-  // Header
-  const header = el('div', 'phase-header')
-  header.innerHTML = `
-    <div class="phase-title-group">
-      <span class="phase-label">${phase.label}</span>
-      <span class="phase-range-badge">Níveis ${phase.range}</span>
-    </div>
-    <div class="phase-prog-wrap">
-      <div class="phase-prog-bar">
-        <div class="phase-prog-fill" style="width:${pct}%"></div>
-      </div>
-      <span class="phase-prog-label">${done}/${total}</span>
-    </div>
-    <svg class="phase-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="m6 9 6 6 6-6"/>
-    </svg>`
-  header.addEventListener('click', () => {
-    section.classList.toggle('collapsed')
-    STATE.collapsed[collapseKey] = section.classList.contains('collapsed')
-    saveProgress()
-  })
-
-  // Body com cards
-  const body = el('div', 'phase-body')
-  body.id = `phase-body-${char.id}-${phaseIdx}`
-  phase.levels.forEach(lvl => {
-    body.appendChild(buildLevelCard(char, lvl))
-  })
-
-  section.appendChild(header)
-  section.appendChild(body)
-  return section
-}
-
-/** Determina o próximo nível (menor nível não completo) */
-function getNextLevel(char) {
-  const levels = char.phases.flatMap(p => p.levels)
-  return levels.find(l => !STATE.progress[char.id]?.has(l.level))
-}
-
-// ── Level Card ─────────────────────────────────────────────
-function buildLevelCard(char, lvl) {
-  const isDone  = STATE.progress[char.id]?.has(lvl.level)
-  const nextLvl = getNextLevel(char)
-  const isNext  = !isDone && nextLvl?.level === lvl.level
-
-  const card = el('div', [
-    'level-card',
-    isDone  ? 'done'        : '',
-    isNext  ? 'next-target' : ''
-  ].filter(Boolean).join(' '))
-
-  card.dataset.level    = lvl.level
-  card.dataset.charId   = char.id
-  card.dataset.hasTalent = lvl.talent ? '1' : '0'
-  card.dataset.hasSkills = lvl.skills?.length ? '1' : '0'
-  card.style.setProperty('--char-color', char.color)
-
-  // --- Skills chips com tooltip
-  const skillsHtml = (lvl.skills?.length)
-    ? `<div class="skills-list">${lvl.skills.map(s =>
-        `<span class="skill-chip">${s}
-          <span class="tooltip">${s} — desbloqueada neste nível</span>
-        </span>`).join('')}</div>`
-    : `<span style="color:var(--text-faint);font-size:var(--text-xs)">—</span>`
-
-  card.innerHTML = `
-    <div class="card-stripe"></div>
-    <div class="card-inner">
-      <div class="card-header">
-        <div class="card-header-row">
-          <div class="card-level-num" style="color:${char.color}">Nível ${lvl.level}</div>
-          <span class="card-next-badge">PRÓXIMO</span>
-        </div>
-        <label class="card-check" title="Marcar como completo">
-          <input type="checkbox" data-char="${char.id}" data-level="${lvl.level}" ${isDone ? 'checked' : ''}>
-          <span class="check-box">
-            <svg class="check-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          </span>
-        </label>
-      </div>
-      <div class="card-rows">
-        <div class="card-row">
-          <span class="row-label">Atributo</span>
-          <span class="row-value highlight">${lvl.attribute}</span>
-        </div>
-        <div class="card-row">
-          <span class="row-label">Ability</span>
-          <span class="row-value">${lvl.combat}</span>
-        </div>
-        ${lvl.talent ? `
-        <div class="card-row">
-          <span class="row-label">Talent</span>
-          <span class="row-value"><span class="talent-badge">⭐ ${lvl.talent}</span></span>
-        </div>` : ''}
-        <div class="card-row">
-          <span class="row-label">Skills</span>
-          <span class="row-value">${skillsHtml}</span>
-        </div>
-      </div>
-      ${lvl.tip ? `<div class="card-tip">${lvl.tip}</div>` : ''}
-    </div>`
-
-  // Bind checkbox
-  const cb = card.querySelector('input[type="checkbox"]')
-  cb.addEventListener('change', () => toggleLevel(char.id, lvl.level, cb.checked))
-
-  return card
-}
-
-/** Marca/desmarca um nível e re-renderiza */
-function toggleLevel(charId, level, checked) {
-  const prog = STATE.progress[charId]
-  checked ? prog.add(level) : prog.delete(level)
-  saveProgress()
-
-  // Re-renderiza: atualiza cards, header e nav
-  const char = STATE.builds.characters.find(c => c.id === charId)
-  refreshProgress(char)
-  showToast(checked ? `✅ Nível ${level} completo!` : `↩ Nível ${level} desmarcado`)
-}
-
-/** Atualiza progresso sem re-renderizar tudo */
-function refreshProgress(char) {
-  // Atualiza todos os cards (estados done/next-target)
-  const nextLvl = getNextLevel(char)
-  document.querySelectorAll(`.level-card[data-char-id="${char.id}"]`).forEach(card => {
-    const lvl = parseInt(card.dataset.level)
-    const isDone = STATE.progress[char.id]?.has(lvl)
-    const isNext = !isDone && nextLvl?.level === lvl
-    card.classList.toggle('done', isDone)
-    card.classList.toggle('next-target', isNext)
-  })
-
-  // Atualiza rings e phase bars
-  const { done, total, pct } = calcProgress(char.id)
-  const ringPct = document.querySelector('.ring-pct')
-  if (ringPct) ringPct.textContent = pct + '%'
-  const ringText = document.querySelector('.ring-text')
-  if (ringText) ringText.textContent = `${done} / ${total} níveis`
-
-  const r = 42, circ = 2 * Math.PI * r
-  const fillEl = document.querySelector('.ring-fill')
-  if (fillEl) fillEl.setAttribute('stroke-dashoffset', circ - (pct / 100) * circ)
-
-  // Phase progress bars
-  char.phases.forEach((phase, idx) => {
-    const phaseDone = phase.levels.filter(l => STATE.progress[char.id]?.has(l.level)).length
-    const phaseTotal = phase.levels.length
-    const phasePct   = phaseTotal ? Math.round((phaseDone / phaseTotal) * 100) : 0
-    const section = document.querySelectorAll('.phase-section')[idx]
-    if (!section) return
-    const fill = section.querySelector('.phase-prog-fill')
-    if (fill) fill.style.width = phasePct + '%'
-    const label = section.querySelector('.phase-prog-label')
-    if (label) label.textContent = `${phaseDone}/${phaseTotal}`
-  })
-
-  renderNav()
-}
-
-// ── Filtros / Busca ────────────────────────────────────────
-function updateCards(char) {
-  document.querySelectorAll('.level-card').forEach(card => {
-    const lvl    = parseInt(card.dataset.level)
-    const isDone = STATE.progress[char.id]?.has(lvl)
-    const txt    = card.textContent.toLowerCase()
-
-    let visible = true
-
-    switch (STATE.filter) {
-      case 'talent':  visible = card.dataset.hasTalent === '1'; break
-      case 'skill':   visible = card.dataset.hasSkills === '1'; break
-      case 'pending': visible = !isDone; break
-      case 'done':    visible = isDone;  break
+    if (char) {
+      avatarEl.textContent = char.icon
+      nameEl.textContent   = char.name
+      roleEl.textContent   = char.class + ' • ' + char.role
+      slotEl.style.setProperty('--char-color', char.color)
+      slotEl.classList.remove('empty')
+      const { pct } = charProgress(char)
+      nameEl.title = `${pct}% completo`
+    } else {
+      avatarEl.textContent = '❓'
+      nameEl.textContent   = 'Vazio'
+      roleEl.textContent   = 'Clique para escolher'
+      slotEl.style.removeProperty('--char-color')
+      slotEl.classList.add('empty')
     }
-
-    if (visible && STATE.search) {
-      visible = txt.includes(STATE.search)
-    }
-
-    card.classList.toggle('hidden', !visible)
   })
+
+  // Progresso geral
+  const pct = partyPct()
+  $('#partyProgressFill').style.width = pct + '%'
+  $('#partyProgressPct').textContent  = pct + '%'
 }
 
-// ── Scroll para próximo nível ──────────────────────────────
-function scrollToNext(char) {
-  const nextLvl = getNextLevel(char)
-  if (!nextLvl) { showToast('🎉 Build completa!'); return }
-  const card = document.querySelector(`.level-card[data-level="${nextLvl.level}"]`)
-  if (!card) return
+// ════════════════════════════════════════════════════════════
+// Picker Modal
+// ════════════════════════════════════════════════════════════
+function openPicker(slotIndex) {
+  pickerTargetSlot = slotIndex
+  const overlay = $('#pickerOverlay')
+  const grid    = $('#pickerGrid')
 
-  // Expande a phase se colapsada
-  const section = card.closest('.phase-section')
-  if (section?.classList.contains('collapsed')) section.classList.remove('collapsed')
+  // Personagens disponíveis para slots: todos menos tav, com estado in-party
+  const available = allCharacters.filter(c => c.id !== playerCharId)
 
-  card.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  card.style.outline = `2px solid ${char.color}`
-  setTimeout(() => card.style.outline = '', 2000)
-  showToast(`▶ Nível ${nextLvl.level} em foco`)
-}
+  grid.innerHTML = ''
+  available.forEach((char, i) => {
+    const inParty = partySlots.includes(char.id) && partySlots.indexOf(char.id) !== slotIndex
+    const selected = partySlots[slotIndex] === char.id
 
-// ── Grid de informações ────────────────────────────────────
-function renderInfoGrid(char) {
-  const grid = el('div', 'info-grid')
-
-  // Combo de combate
-  const comboCard = el('div', 'info-card')
-  comboCard.innerHTML = `
-    <div class="info-card-header">⚔️ Combo de Combate</div>
-    <div class="info-card-body">
-      <ul class="info-list">${char.comboCombate.map(c => `<li class="info-item">${c}</li>`).join('')}</ul>
-    </div>`
-
-  // Equipamentos
-  const equipCard = el('div', 'info-card')
-  equipCard.innerHTML = `
-    <div class="info-card-header">🎒 Equipamentos Recomendados</div>
-    <div class="info-card-body">${char.equipment.map(e =>
-      `<div class="equip-item">
-        <span class="equip-name">${e.name}</span>
-        <span class="equip-note">${e.note}</span>
-      </div>`).join('')}</div>`
-
-  // Habilidades-chave
-  const abilityCard = el('div', 'info-card')
-  abilityCard.innerHTML = `
-    <div class="info-card-header">✨ Habilidades-Chave</div>
-    <div class="info-card-body">
-      <ul class="info-list">${char.keyAbilities.map(a => `<li class="info-item">${a}</li>`).join('')}
-        ${char.keySpells?.length ? char.keySpells.map(s => `<li class="info-item">${s}</li>`).join('') : ''}
-      </ul>
-    </div>`
-
-  grid.appendChild(comboCard)
-  grid.appendChild(equipCard)
-  grid.appendChild(abilityCard)
-  return grid
-}
-
-// ── Vista de Companheiros ──────────────────────────────────
-function renderCompanions() {
-  const wrap = el('div')
-
-  // Header
-  const hdr = el('div', 'char-header')
-  hdr.innerHTML = `
-    <div class="char-header-left">
-      <div class="char-name-row">
-        <span class="char-icon-big">👥</span>
-        <h2 class="char-name" style="color:var(--accent)">Companheiros</h2>
-      </div>
-      <div class="char-class-badge">Progressão de nível — todos os companheiros opcionais</div>
-      <p class="char-description">Guia rápido de quando pegar cada companheiro e o que fazer a cada nível.</p>
-    </div>`
-  wrap.appendChild(hdr)
-
-  // Grid de cards
-  const grid = el('div', 'companions-grid')
-  grid.style.marginTop = 'var(--space-6)'
-
-  STATE.builds.companions.forEach(comp => {
-    const card = el('div', 'companion-card')
-    card.style.setProperty('--char-color', comp.color)
-    card.style.borderTopColor = comp.color + '60'
-
-    const rows = Object.entries(comp.levelSummary)
-      .map(([lvl, txt]) => `
-        <div class="level-summary-row">
-          <span class="level-summary-num">${lvl}</span>
-          <span>${txt}</span>
-        </div>`).join('')
-
+    const card = document.createElement('button')
+    card.className = 'picker-card' +
+      (selected  ? ' selected'  : '') +
+      (inParty   ? ' in-party'  : '')
+    card.style.animationDelay = (i * 30) + 'ms'
+    card.setAttribute('aria-label', char.name)
     card.innerHTML = `
-      <div class="companion-card-header" style="border-left: 3px solid ${comp.color}60; padding-left: calc(var(--space-5) - 3px)">
-        <span class="companion-icon">${comp.icon}</span>
-        <div>
-          <div class="companion-name" style="color:${comp.color}">${comp.name}</div>
-          <div class="companion-class">${comp.class} — ${comp.subclass}</div>
-        </div>
-      </div>
-      <div class="companion-desc">${comp.description}</div>
-      <div class="companion-levels">
-        <div class="companion-levels-title">Progressão por Nível</div>
-        <div class="level-summary-list">${rows}</div>
-      </div>`
-
+      <span class="picker-icon">${char.icon}</span>
+      <span class="picker-name">${char.name}</span>
+      <span class="picker-class">${char.class}</span>
+      <span class="picker-role-tag">${char.role}</span>
+    `
+    card.addEventListener('click', () => {
+      partySlots[slotIndex] = char.id
+      closePicker()
+      saveProgress()
+      renderAll()
+      showToast(`${char.icon} ${char.name} adicionado(a) à party!`)
+    })
     grid.appendChild(card)
   })
 
-  wrap.appendChild(grid)
-  return wrap
+  overlay.hidden = false
+  $('#pickerClose').focus()
 }
 
-// ── Reset ──────────────────────────────────────────────────
-function bindGlobal() {
-  $('resetBtn').addEventListener('click', () => {
-    if (!confirm('Resetar todo o progresso? Isso não pode ser desfeito.')) return
-    STATE.builds.characters.forEach(c => { STATE.progress[c.id] = new Set() })
-    STATE.collapsed = {}
+function closePicker() {
+  $('#pickerOverlay').hidden = true
+  pickerTargetSlot = null
+}
+
+// ════════════════════════════════════════════════════════════
+// Renderizar coluna de personagem
+// ════════════════════════════════════════════════════════════
+function renderCharCol(char, colIndex) {
+  if (!char) return renderEmptyCol(colIndex)
+
+  const { done, total, pct } = charProgress(char)
+  const nxt = nextLevel(char)
+  const prog = progress[char.id] || {}
+
+  // Circumference do mini ring (r=22)
+  const r = 22
+  const circ = 2 * Math.PI * r
+  const offset = circ - (pct / 100 * circ)
+
+  const col = document.createElement('div')
+  col.className = 'char-col'
+  col.style.animationDelay = (colIndex * 60) + 'ms'
+  col.dataset.charId = char.id
+
+  // ── Header ──
+  col.innerHTML = `
+    <div class="col-header" style="--char-color:${char.color}">
+      <div class="col-header-top-stripe"></div>
+      <div class="col-header-body">
+        <div class="col-name-row">
+          <span class="col-icon">${char.icon}</span>
+          <span class="col-name">${char.name}</span>
+        </div>
+        <div class="col-subline">${char.class} · ${char.subclass || ''} · ${char.role}</div>
+        <div class="col-progress">
+          <div class="mini-ring">
+            <svg class="mini-ring-svg" width="52" height="52" viewBox="0 0 52 52">
+              <circle class="mini-track" cx="26" cy="26" r="${r}"/>
+              <circle class="mini-fill" cx="26" cy="26" r="${r}"
+                stroke="${char.color}"
+                stroke-dasharray="${circ}"
+                stroke-dashoffset="${offset}"/>
+            </svg>
+            <div class="mini-label">
+              <span class="mini-pct">${pct}%</span>
+              <span class="mini-cap">done</span>
+            </div>
+          </div>
+          <div class="col-progress-info">
+            <span class="col-progress-text">${done}/${total} níveis</span>
+            ${nxt ? `<span class="col-progress-text" style="color:${char.color}">▶ Próximo: Lv${nxt}</span>` : `<span class="col-progress-text" style="color:#6daa45">✓ Build completa!</span>`}
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+
+  // ── Phases ──
+  char.phases.forEach(phase => {
+    const phaseLevels  = phase.levels
+    const phaseDone    = phaseLevels.filter(l => prog[l.level]).length
+    const phaseTotal   = phaseLevels.length
+    const phasePct     = phaseTotal ? Math.round(phaseDone / phaseTotal * 100) : 0
+
+    const phaseEl = document.createElement('div')
+    phaseEl.className = 'col-phase'
+    phaseEl.dataset.phase = phase.tag || ''
+    if (phaseDone === phaseTotal && phaseTotal > 0) phaseEl.classList.add('collapsed')
+
+    phaseEl.innerHTML = `
+      <div class="col-phase-header" role="button" aria-expanded="true" tabindex="0">
+        <span class="col-phase-title">${phase.label}</span>
+        <span class="col-phase-counter">${phaseDone}/${phaseTotal}</span>
+        <svg class="col-phase-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="col-phase-bar" style="--char-color:${char.color}">
+        <div class="col-phase-bar-fill" style="width:${phasePct}%;background:${char.color};"></div>
+      </div>
+      <div class="col-phase-body"></div>
+    `
+
+    // Collapse toggle
+    const phaseHeader = phaseEl.querySelector('.col-phase-header')
+    phaseHeader.addEventListener('click', () => {
+      phaseEl.classList.toggle('collapsed')
+      phaseHeader.setAttribute('aria-expanded', !phaseEl.classList.contains('collapsed'))
+    })
+    phaseHeader.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); phaseHeader.click() }})
+
+    const body = phaseEl.querySelector('.col-phase-body')
+
+    // Level cards
+    phaseLevels.forEach(lvl => {
+      const isDone    = !!prog[lvl.level]
+      const isNext    = lvl.level === nxt
+
+      const card = document.createElement('div')
+      card.className = 'lcard' + (isDone ? ' done' : '') + (isNext ? ' next-target' : '')
+      card.id = `card-${char.id}-${lvl.level}`
+
+      // Skill chips
+      const skillsHtml = (lvl.skills && lvl.skills.length)
+        ? `<div class="skills-wrap">${lvl.skills.map(s =>
+            `<span class="skill-chip">${s}<span class="sk-tooltip">${s}</span></span>`
+          ).join('')}</div>`
+        : '<span style="color:var(--text-faint);font-size:.6rem">—</span>'
+
+      // Talent
+      const talentHtml = lvl.talent
+        ? `<span class="talent-badge">★ ${lvl.talent}</span>`
+        : '<span style="color:var(--text-faint);font-size:.6rem">—</span>'
+
+      card.innerHTML = `
+        <div class="lcard-top" style="background:${char.color};"></div>
+        <div class="lcard-inner">
+          <div class="lcard-header">
+            <div>
+              <span class="lcard-lvl" style="color:${char.color}">Lv ${lvl.level}</span>
+              <span class="lcard-next-badge" style="background:${char.color};">PRÓXIMO</span>
+            </div>
+            <label class="lcard-check" title="Marcar como concluído">
+              <input type="checkbox" ${isDone ? 'checked' : ''} data-char="${char.id}" data-level="${lvl.level}">
+              <span class="check-box" style="${isDone ? `background:${char.color};border-color:${char.color}` : ''}">
+                <svg class="check-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>
+              </span>
+            </label>
+          </div>
+          <div class="lcard-rows">
+            ${lvl.attribute ? `
+            <div class="lcard-row">
+              <span class="lcard-label">Atrib.</span>
+              <span class="lcard-val hi">${lvl.attribute}</span>
+            </div>` : ''}
+            ${lvl.combat ? `
+            <div class="lcard-row">
+              <span class="lcard-label">Ability</span>
+              <span class="lcard-val">${lvl.combat}</span>
+            </div>` : ''}
+            <div class="lcard-row">
+              <span class="lcard-label">Talent</span>
+              <span class="lcard-val">${talentHtml}</span>
+            </div>
+            <div class="lcard-row">
+              <span class="lcard-label">Skills</span>
+              <span class="lcard-val">${skillsHtml}</span>
+            </div>
+          </div>
+          ${lvl.tip ? `<div class="lcard-tip">${lvl.tip}</div>` : ''}
+        </div>
+      `
+
+      // Checkbox handler
+      const cb = card.querySelector('input[type=checkbox]')
+      cb.addEventListener('change', () => {
+        if (!progress[char.id]) progress[char.id] = {}
+        progress[char.id][lvl.level] = cb.checked
+        saveProgress()
+        showToast(cb.checked ? `✅ Lv ${lvl.level} concluído!` : `↩ Lv ${lvl.level} desmarcado`)
+        renderAll()
+      })
+
+      body.appendChild(card)
+    })
+
+    col.appendChild(phaseEl)
+  })
+
+  return col
+}
+
+// ── Coluna vazia (slot sem personagem selecionado)
+function renderEmptyCol(slotIndex) {
+  const col = document.createElement('div')
+  col.className = 'empty-col'
+  col.style.animationDelay = ((slotIndex + 1) * 60) + 'ms'
+  col.innerHTML = `
+    <span class="empty-col-icon">⚔️</span>
+    <span class="empty-col-text">Slot vazio</span>
+    <span class="empty-col-btn">+ Escolher companheiro</span>
+  `
+  col.addEventListener('click', () => openPicker(slotIndex))
+  return col
+}
+
+// ════════════════════════════════════════════════════════════
+// Renderizar tudo
+// ════════════════════════════════════════════════════════════
+function renderAll() {
+  renderPartyBar()
+
+  const main = $('#mainContent')
+  main.innerHTML = ''
+
+  const grid = document.createElement('div')
+  grid.className = 'party-grid'
+
+  // Slot 0 = Tav (fixo)
+  const tavChar = getChar(playerCharId)
+  grid.appendChild(renderCharCol(tavChar, 0))
+
+  // Slots 1-3
+  ;[0,1,2].forEach(i => {
+    const id   = partySlots[i]
+    const char = id ? getChar(id) : null
+    grid.appendChild(renderCharCol(char, i + 1))
+  })
+
+  main.appendChild(grid)
+}
+
+// ════════════════════════════════════════════════════════════
+// Event Listeners
+// ════════════════════════════════════════════════════════════
+function initEvents() {
+  // Slots selecionáveis no party bar
+  ;[0,1,2].forEach(i => {
+    const slotEl = $(`#slot${i+1}`)
+    slotEl.addEventListener('click', () => openPicker(i))
+  })
+
+  // Fechar picker
+  $('#pickerClose').addEventListener('click', closePicker)
+  $('#pickerOverlay').addEventListener('click', e => {
+    if (e.target === $('#pickerOverlay')) closePicker()
+  })
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closePicker()
+  })
+
+  // Reset
+  $('#resetBtn').addEventListener('click', () => {
+    if (!confirm('Resetar todo o progresso salvo?')) return
+    progress = {}
     saveProgress()
-    renderNav()
-    renderMain()
+    renderAll()
     showToast('🔄 Progresso resetado')
   })
+
+  // Theme toggle
+  const toggle = $('[data-theme-toggle]')
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const curr = document.documentElement.getAttribute('data-theme') || 'dark'
+      const next = curr === 'dark' ? 'light' : 'dark'
+      document.documentElement.setAttribute('data-theme', next)
+      toggle.innerHTML = next === 'dark'
+        ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`
+        : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`
+    })
+  }
 }
 
-// ── Boot ───────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════
+// Bootstrap
+// ════════════════════════════════════════════════════════════
+async function init() {
+  try {
+    const res  = await fetch('./builds.json')
+    const data = await res.json()
+
+    allCharacters = data.characters
+    playerCharId  = data.playerCharId || 'tav'
+
+    loadSaved()
+
+    // Se o localStorage não tinha party salva, usa o default do JSON
+    if (!localStorage.getItem('bg3_party') && data.defaultParty) {
+      partySlots = data.defaultParty
+    }
+
+    initEvents()
+    renderAll()
+
+  } catch (err) {
+    console.error('Erro ao carregar builds.json', err)
+    $('#mainContent').innerHTML = `
+      <div style="text-align:center;padding:4rem;color:var(--text-muted);">
+        <div style="font-size:3rem;margin-bottom:1rem">⚠️</div>
+        <p>Erro ao carregar builds.json</p>
+        <p style="font-size:.8rem;margin-top:.5rem">${err.message}</p>
+      </div>
+    `
+  }
+}
+
 document.addEventListener('DOMContentLoaded', init)

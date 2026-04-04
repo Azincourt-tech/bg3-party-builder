@@ -1,205 +1,173 @@
 {
   "meta": {
     "game": "Baldur's Gate 3",
-    "version": "1.0.0",
-    "maxLevel": 12,
-    "description": "Builds otimizadas para party BG3 — Tactician/Honour"
+    "version": "Detailed Party Tracker",
+    "levels": 12,
+    "notes": "Builds detalhadas com progressão nível por nível para uso no tracker web."
   },
+  "playerCharId": "tav",
+  "defaultParty": ["laezel", "shadowheart", "astarion"],
   "characters": [
     {
       "id": "tav",
       "name": "Tav",
       "icon": "🏹",
-      "class": "Ranger / Rogue",
-      "subclass": "Gloom Stalker / Assassin",
-      "role": "DPS à Distância",
-      "race": "Meio-Elfo Silvestre",
-      "primaryDamage": "Ranged Physical",
+      "class": "Ranger / Rogue / Fighter",
+      "subclass": "Gloom Stalker / Assassin / Battle Master",
+      "role": "Alpha Striker",
+      "race": "Custom",
+      "color": "#6ea85f",
+      "description": "Tav como Ranger Gloom Stalker com multiclass em Rogue Assassin e Fighter Battle Master — a build de alpha strike mais forte do jogo. Dano absurdo no primeiro turno graças à combinação de Dread Ambusher, Assassinate e Action Surge.",
+      "primaryDamage": "Physical",
       "primaryAttribute": "Destreza",
-      "color": "#3a8c5a",
-      "description": "O melhor arqueiro do jogo. Dano absurdo no primeiro turno com combinação de furtividade e acertos críticos.",
       "baseStats": {
-        "FOR": 10,
-        "DES": 16,
+        "FOR": 8,
+        "DES": 17,
         "CON": 14,
-        "INT": 8,
+        "INT": 10,
         "SAB": 14,
-        "CAR": 12
+        "CAR": 8
       },
       "keyAbilities": [
-        "Emboscar Sombrio",
-        "Ataque Furtivo",
-        "Assassinar",
-        "Atirador Perfeito"
+        "Dread Ambusher",
+        "Assassinate",
+        "Sneak Attack",
+        "Action Surge",
+        "Sharpshooter"
       ],
       "keySpells": [
-        "Marca do Caçador",
-        "Golpe Enredante",
-        "Disfarce"
+        "Hunter's Mark",
+        "Longstrider",
+        "Misty Step",
+        "Disguise Self"
       ],
       "equipment": [
-        {
-          "name": "Arco Titanstring",
-          "note": "Adiciona FOR ao dano"
-        },
-        {
-          "name": "Armadura Média",
-          "note": "Modificador de DES conta para CA"
-        },
-        {
-          "name": "Vingança da Prole",
-          "note": "Dano extra de veneno"
-        },
-        {
-          "name": "Bulbo Cáustico",
-          "note": "Consumível, dano de ácido em área"
-        }
+        "Longbow / Crossbow",
+        "Light armor",
+        "Sharpshooter gear",
+        "Stealth / Initiative items"
       ],
       "comboCombate": [
-        "Sempre entre em furtividade antes do combate",
-        "Atire com Surpresa (inimigo surpreso)",
-        "1º turno: 2 ataques + Emboscar Sombrio + crítico de Assassino",
-        "Dano: ~60-100+ no primeiro turno! 💀"
+        "Sempre inicie de stealth para garantir o turno surpresa.",
+        "Turno 1: Dread Ambusher + Assassinate = burst letal em qualquer alvo.",
+        "Action Surge no mesmo turno para eliminar antes do inimigo agir.",
+        "Hunter's Mark + Sneak Attack entregam dano consistente pós-alpha."
       ],
       "phases": [
         {
-          "label": "Níveis 1–5 — Fundação Ranger",
-          "range": "1-5",
+          "label": "Níveis 1–4 — Início",
+          "range": "1-4",
           "tag": "early",
           "levels": [
             {
               "level": 1,
-              "attribute": "DES +16, CON +14, SAB +14",
-              "combat": "Ranger 1",
-              "talent": null,
-              "skills": [
-                "Marca do Caçador",
-                "Golpe Enredante"
-              ],
-              "tip": "Inimigo Favorito: Caçador de Recompensas, Explorador Natural: Urbano.",
-              "isCreation": true
+              "attribute": "DES +1",
+              "combat": "Rogue 1",
+              "talent": "Sneak Attack",
+              "skills": ["Sneak Attack", "Expertise (Stealth + Percepção)"],
+              "tip": "Começar Rogue garante Expertise em Stealth — fundamental para iniciar sempre de surpresa."
             },
             {
               "level": 2,
-              "attribute": "Destreza",
-              "combat": "Ranger 2",
-              "talent": null,
-              "skills": [
-                "Arquearia +2"
-              ],
-              "tip": "Estilo de Luta: Arquearia. +2 em todos os tiros!"
+              "attribute": "DES",
+              "combat": "Rogue 2",
+              "talent": "Cunning Action",
+              "skills": ["Dash", "Hide", "Disengage"],
+              "tip": "Cunning Action como ação bônus garante reposicionamento sem perder o ataque."
             },
             {
               "level": 3,
-              "attribute": "Destreza",
-              "combat": "Ranger 3",
-              "talent": null,
-              "skills": [
-                "Emboscar Sombrio"
-              ],
-              "tip": "⭐ Gloom Stalker! Ataque extra no 1º turno — poder de surpresa enorme."
+              "attribute": "DES",
+              "combat": "Ranger 1",
+              "talent": "Favoured Enemy",
+              "skills": ["Hunter's Mark", "Longstrider"],
+              "tip": "Primeira transição para Ranger — Hunter's Mark soma dano contínuo e Longstrider aumenta mobilidade."
             },
             {
               "level": 4,
-              "attribute": "Destreza",
-              "combat": "Ranger 4",
-              "talent": "Atirador Perfeito",
-              "skills": [],
-              "tip": "⭐ Atirador Perfeito: -5 acerto, +10 dano. Com vantagem de stealth é sempre positivo."
-            },
-            {
-              "level": 5,
-              "attribute": "Destreza",
-              "combat": "Ranger 5",
-              "talent": null,
-              "skills": [
-                "Ataque Extra"
-              ],
-              "tip": "2 ataques por turno + Emboscar Sombrio = 3 no 1º turno de surpresa!"
+              "attribute": "DES",
+              "combat": "Ranger 2",
+              "talent": "Archery",
+              "skills": ["Archery Fighting Style"],
+              "tip": "+2 no ataque com arco é enorme para consistência — prioridade máxima."
             }
           ]
         },
         {
-          "label": "Níveis 6–9 — Multiclasse Rogue",
-          "range": "6-9",
+          "label": "Níveis 5–8 — Núcleo da Build",
+          "range": "5-8",
           "tag": "mid",
           "levels": [
             {
+              "level": 5,
+              "attribute": "DES",
+              "combat": "Ranger 3",
+              "talent": "Gloom Stalker",
+              "skills": ["Dread Ambusher", "Disguise Self", "Umbral Shroud"],
+              "tip": "Gloom Stalker ativa o core da build. Dread Ambusher no turno 1 é o maior spike da progressão."
+            },
+            {
               "level": 6,
-              "attribute": "Destreza",
-              "combat": "Rogue 1",
-              "talent": null,
-              "skills": [
-                "Ataque Furtivo 1d6"
-              ],
-              "tip": "Multiclasse para Rogue. Sneak Attack adiciona dano extra sempre que tiver vantagem."
+              "attribute": "DES +2",
+              "combat": "Ranger 4",
+              "talent": "Sharpshooter",
+              "skills": ["Feat: Sharpshooter"],
+              "tip": "Sharpshooter é o feat mais importante. Com vantagem e Precision Attack depois, o -5 hit vira irrelevante."
             },
             {
               "level": 7,
-              "attribute": "Destreza",
-              "combat": "Rogue 2",
+              "attribute": "DES",
+              "combat": "Ranger 5",
               "talent": null,
-              "skills": [
-                "Ação Ardilosa"
-              ],
-              "tip": "Ação Ardilosa: furtividade como ação bônus = stealth infinito entre ataques!"
+              "skills": ["Extra Attack", "Misty Step"],
+              "tip": "Extra Attack fecha o núcleo Ranger. A build agora causa dano real em qualquer turno."
             },
             {
               "level": 8,
-              "attribute": "Destreza",
+              "attribute": "DES",
               "combat": "Rogue 3",
-              "talent": null,
-              "skills": [
-                "Assassinar"
-              ],
-              "tip": "⭐ Assassino! Crítico garantido em inimigos surpresos. Combo definitivo com Gloom Stalker."
-            },
-            {
-              "level": 9,
-              "attribute": "Destreza",
-              "combat": "Rogue 4",
-              "talent": "Melhoria de Atributo (+2 DES → 18)",
-              "skills": [],
-              "tip": "DES 18 = +4 em ataque e CA. Prioridade máxima antes de qualquer outro talento."
+              "talent": "Assassin",
+              "skills": ["Assassinate"],
+              "tip": "Assassin com stealth = crítico garantido + dano extra no turno surpresa. Sinergia perfeita com Dread Ambusher."
             }
           ]
         },
         {
-          "label": "Níveis 10–12 — Finalização",
-          "range": "10-12",
+          "label": "Níveis 9–12 — Finalização",
+          "range": "9-12",
           "tag": "late",
           "levels": [
             {
+              "level": 9,
+              "attribute": "DES +2",
+              "combat": "Rogue 4",
+              "talent": "Ability Improvement",
+              "skills": ["Feat: +2 Destreza"],
+              "tip": "Maximize Destreza agora — AC, ataque e dano em escala."
+            },
+            {
               "level": 10,
-              "attribute": "Destreza",
-              "combat": "Rogue 5",
-              "talent": null,
-              "skills": [
-                "Evasão",
-                "Ataque Furtivo 2d6"
-              ],
-              "tip": "Evasão: dano de área reduzido pela metade (ou zero com salvamento). Sobrevivência alta."
+              "attribute": "CON",
+              "combat": "Fighter 1",
+              "talent": "Defense",
+              "skills": ["Second Wind"],
+              "tip": "Defense Fighting Style melhora a AC com armadura leve. Base para fechar com Action Surge."
             },
             {
               "level": 11,
-              "attribute": "Destreza",
-              "combat": "Rogue 6",
-              "talent": "Alerta",
-              "skills": [
-                "Ataque Furtivo 2d6"
-              ],
-              "tip": "⭐ Alerta: +5 iniciativa, nunca pode ser surpreendido. Age sempre primeiro!"
+              "attribute": "CON",
+              "combat": "Fighter 2",
+              "talent": "Action Surge",
+              "skills": ["Action Surge"],
+              "tip": "Action Surge no turno alpha = dobra o número de ataques. Com Dread Ambusher e Assassinate, um único round pode limpar encounters."
             },
             {
               "level": 12,
-              "attribute": "Destreza",
-              "combat": "Rogue 7",
-              "talent": null,
-              "skills": [
-                "Talento Confiável",
-                "Ataque Furtivo 3d6"
-              ],
-              "tip": "Build completa. Talento Confiável = mínimo 10 em todas as perícias de proficiência."
+              "attribute": "CON",
+              "combat": "Fighter 3",
+              "talent": "Battle Master",
+              "skills": ["Precision Attack", "Trip Attack", "Volley"],
+              "tip": "Battle Master fecha a build com Precision Attack (contra AC alta) e Trip Attack (knockdown). Perfeito."
             }
           ]
         }
@@ -209,188 +177,152 @@
       "id": "laezel",
       "name": "Lae'zel",
       "icon": "⚔️",
-      "class": "Guerreiro",
-      "subclass": "Mestre de Batalha",
-      "role": "DPS Corpo a Corpo",
+      "class": "Fighter",
+      "subclass": "Battle Master",
+      "role": "Frontliner",
       "race": "Githyanki",
-      "primaryDamage": "Physical Melee",
+      "color": "#c96b3b",
+      "description": "Build detalhada para Lae'zel com foco em progressão estável e forte sinergia de party.",
+      "primaryDamage": "Physical",
       "primaryAttribute": "Força",
-      "color": "#8c3a3a",
-      "description": "Tanque/DPS corpo a corpo que dá dano alto e controla o campo com manobras. 3 ataques por turno no nível 11.",
       "baseStats": {
         "FOR": 17,
         "DES": 13,
         "CON": 15,
-        "INT": 10,
+        "INT": 8,
         "SAB": 12,
-        "CAR": 8
+        "CAR": 10
       },
       "keyAbilities": [
-        "Surto de Ação",
-        "Ripostar",
-        "Ataque de Precisão",
-        "Ataque Derrubador"
+        "Action Surge",
+        "Trip Attack",
+        "Precision Attack",
+        "Riposte",
+        "Extra Attack"
       ],
       "keySpells": [],
-      "equipment": [
-        {
-          "name": "Espada de Prata do Plano Astral",
-          "note": "Espada lendária Githyanki"
-        },
-        {
-          "name": "Armadura de Placas",
-          "note": "CA máxima"
-        },
-        {
-          "name": "Armadura Média Githyanki",
-          "note": "Bônus raciais"
-        },
-        {
-          "name": "Luvas do Poder",
-          "note": "Dano extra"
-        }
-      ],
+      "equipment": ["Greatsword", "Heavy armor", "Crit gear", "Mobility items"],
       "comboCombate": [
-        "Psionics Githyanki: Salto + Passo Nebuloso para alcançar inimigos",
-        "Surto de Ação = turno dobrado (6 ataques no Lv 11!)",
-        "Ataque Derrubador derruba o inimigo, ganha vantagem nos próximos",
-        "Mestre de Arma de Duas Mãos com vantagem = dano massivo"
+        "Entre primeiro nas lutas.",
+        "Use Trip Attack para knockdown.",
+        "Precision Attack ajuda contra AC alta.",
+        "Action Surge deve decidir rounds."
       ],
       "phases": [
         {
-          "label": "Níveis 1–5 — Fundação Guerreiro",
-          "range": "1-5",
+          "label": "Níveis 1–4 — Início",
+          "range": "1-4",
           "tag": "early",
           "levels": [
             {
               "level": 1,
-              "attribute": "FOR +17, CON +15, SAB +12",
-              "combat": "Guerreiro 1",
-              "talent": null,
-              "skills": [
-                "Segundo Fôlego"
-              ],
-              "tip": "Combate com Arma de Duas Mãos como Estilo de Luta. Base para todo o dano.",
-              "isCreation": true
+              "attribute": "FOR +1",
+              "combat": "Fighter 1",
+              "talent": "Great Weapon Fighting",
+              "skills": ["Second Wind"],
+              "tip": "Arma de duas mãos e presença de front desde cedo."
             },
             {
               "level": 2,
-              "attribute": "Força",
-              "combat": "Guerreiro 2",
-              "talent": null,
-              "skills": [
-                "Surto de Ação"
-              ],
-              "tip": "⭐ Surto de Ação = turno dobrado! Melhor habilidade do Guerreiro, use no 1º turno."
+              "attribute": "FOR",
+              "combat": "Fighter 2",
+              "talent": "Action Surge",
+              "skills": ["Action Surge"],
+              "tip": "Guarde Action Surge para rounds decisivos."
             },
             {
               "level": 3,
-              "attribute": "Força",
-              "combat": "Guerreiro 3",
-              "talent": null,
-              "skills": [
-                "Ripostar",
-                "Ataque de Precisão",
-                "Ataque Derrubador"
-              ],
-              "tip": "⭐ Mestre de Batalha! Manobras custam dado de superioridade e adicionam efeitos fortes."
+              "attribute": "FOR",
+              "combat": "Fighter 3",
+              "talent": "Battle Master",
+              "skills": ["Trip Attack", "Precision Attack", "Riposte"],
+              "tip": "O núcleo da build entra aqui."
             },
             {
               "level": 4,
-              "attribute": "Força",
-              "combat": "Guerreiro 4",
-              "talent": "Mestre de Arma de Duas Mãos",
-              "skills": [],
-              "tip": "⭐ -5 acerto, +10 dano. Com Ataque de Precisão pra compensar, é sempre positivo."
-            },
-            {
-              "level": 5,
-              "attribute": "Força",
-              "combat": "Guerreiro 5",
-              "talent": null,
-              "skills": [
-                "Ataque Extra"
-              ],
-              "tip": "2 ataques por turno. Com Surto de Ação = 4 ataques em um turno já neste nível."
+              "attribute": "FOR +2",
+              "combat": "Fighter 4",
+              "talent": "Ability Improvement",
+              "skills": ["Feat: +2 Strength"],
+              "tip": "Maximizar Strength cedo melhora dano e precisão."
             }
           ]
         },
         {
-          "label": "Níveis 6–9 — Dominância",
-          "range": "6-9",
+          "label": "Níveis 5–8 — Desenvolvimento",
+          "range": "5-8",
           "tag": "mid",
           "levels": [
             {
+              "level": 5,
+              "attribute": "FOR",
+              "combat": "Fighter 5",
+              "talent": null,
+              "skills": ["Extra Attack"],
+              "tip": "Grande spike natural do Fighter."
+            },
+            {
               "level": 6,
-              "attribute": "Força",
-              "combat": "Guerreiro 6",
-              "talent": "Melhoria de Atributo (+2 FOR → 18)",
-              "skills": [],
-              "tip": "FOR 18 = +4 em ataque e dano. Prioridade antes de qualquer outro talento."
+              "attribute": "FOR",
+              "combat": "Fighter 6",
+              "talent": "Great Weapon Master",
+              "skills": ["Feat: Great Weapon Master"],
+              "tip": "Com vantagem e Precision Attack, GWM fica ótimo."
             },
             {
               "level": 7,
-              "attribute": "Força",
-              "combat": "Guerreiro 7",
+              "attribute": "FOR",
+              "combat": "Fighter 7",
               "talent": null,
-              "skills": [
-                "Ataque Amedrontador",
-                "Desarmar"
-              ],
-              "tip": "Manobras extras. Desarmar é especialmente útil contra inimigos com armas poderosas."
+              "skills": ["Disarming Attack", "Menacing Attack"],
+              "tip": "Adapte as manobras ao grupo."
             },
             {
               "level": 8,
-              "attribute": "Força",
-              "combat": "Guerreiro 8",
-              "talent": "Melhoria de Atributo (+2 FOR → 20)",
-              "skills": [],
-              "tip": "⭐ FOR 20! Atributo primário no máximo. Todos os ataques e dano no pico."
-            },
-            {
-              "level": 9,
-              "attribute": "Força",
-              "combat": "Guerreiro 9",
-              "talent": null,
-              "skills": [
-                "Indomável"
-              ],
-              "tip": "Indomável: re-rolar falhas em salvamentos uma vez. Ótima segurança contra CC."
+              "attribute": "CON +2",
+              "combat": "Fighter 8",
+              "talent": "Ability Improvement",
+              "skills": ["Feat: +2 Constitution"],
+              "tip": "Mais vida e estabilidade no front."
             }
           ]
         },
         {
-          "label": "Níveis 10–12 — Finalização",
-          "range": "10-12",
+          "label": "Níveis 9–12 — Finalização",
+          "range": "9-12",
           "tag": "late",
           "levels": [
             {
+              "level": 9,
+              "attribute": "CON",
+              "combat": "Fighter 9",
+              "talent": "Indomitable",
+              "skills": ["Indomitable"],
+              "tip": "Ajuda muito em saves difíceis."
+            },
+            {
               "level": 10,
-              "attribute": "Força",
-              "combat": "Guerreiro 10",
+              "attribute": "CON",
+              "combat": "Fighter 10",
               "talent": null,
-              "skills": [
-                "Manobras +d10"
-              ],
-              "tip": "Dados de superioridade melhoram de d8 para d10. Manobras ficam mais poderosas."
+              "skills": ["Improved Superiority"],
+              "tip": "Mais impacto em dano e controle."
             },
             {
               "level": 11,
-              "attribute": "Força",
-              "combat": "Guerreiro 11",
-              "talent": null,
-              "skills": [
-                "Ataque Extra (2)"
-              ],
-              "tip": "⭐ 3 ATAQUES POR TURNO! Com Surto de Ação = 6 ataques. Dano absurdo."
+              "attribute": "CON",
+              "combat": "Fighter 11",
+              "talent": "Extra Attack",
+              "skills": ["Extra Attack (2)"],
+              "tip": "O terceiro ataque torna Fighter 11 excelente."
             },
             {
               "level": 12,
-              "attribute": "Força",
-              "combat": "Guerreiro 12",
-              "talent": "Atacante Selvagem",
-              "skills": [],
-              "tip": "Atacante Selvagem: re-rola um dado de dano por ataque e usa o maior. Consistência."
+              "attribute": "FOR +1 / CON +1",
+              "combat": "Fighter 12",
+              "talent": "Savage Attacker",
+              "skills": ["Feat: Savage Attacker"],
+              "tip": "Finalize com consistência ofensiva."
             }
           ]
         }
@@ -400,188 +332,157 @@
       "id": "karlach",
       "name": "Karlach",
       "icon": "🔥",
-      "class": "Bárbaro",
-      "subclass": "Berserker",
-      "role": "Tanque / DPS Melee",
-      "race": "Tiefling de Zariel",
-      "primaryDamage": "Physical Melee",
+      "class": "Barbarian / Fighter",
+      "subclass": "Berserker / Champion",
+      "role": "Bruiser",
+      "race": "Tiefling",
+      "color": "#d85b48",
+      "description": "Build detalhada para Karlach com foco em progressão estável e forte sinergia de party.",
+      "primaryDamage": "Physical",
       "primaryAttribute": "Força",
-      "color": "#8c5a1a",
-      "description": "Dano bruto e resistência. Ela bate forte e não morre. Fúria + Frenesi = destruição total.",
       "baseStats": {
-        "FOR": 16,
-        "DES": 14,
+        "FOR": 17,
+        "DES": 13,
         "CON": 16,
         "INT": 8,
         "SAB": 10,
         "CAR": 12
       },
       "keyAbilities": [
-        "Fúria",
-        "Ataque Temerário",
-        "Frenesi",
-        "Crítico Brutal"
+        "Rage",
+        "Frenzied Strike",
+        "Enraged Throw",
+        "Action Surge",
+        "Reckless Attack"
       ],
       "keySpells": [],
       "equipment": [
-        {
-          "name": "Moeda da Alma",
-          "note": "Dano de fogo extra (item exclusivo)"
-        },
-        {
-          "name": "Machado Grande ou Malho",
-          "note": "Arma de duas mãos para Mestre de Arma"
-        },
-        {
-          "name": "Amuleto de Passo Nebuloso",
-          "note": "Mobilidade extra"
-        },
-        {
-          "name": "Botas Ósseas",
-          "note": "Bônus em combate"
-        }
+        "Returning Pike",
+        "Throw gear",
+        "Mobility items",
+        "Barbarian-friendly armor"
       ],
       "comboCombate": [
-        "Sempre Fúria antes de atacar!",
-        "Ataque Temerário = vantagem em todo ataque",
-        "Frenesi = 3 ataques por turno (desde Lv 3!)",
-        "Com Moeda da Alma = dano de fogo extra!"
+        "Abra com Rage.",
+        "Use Enraged Throw para pressão e prone.",
+        "Reckless Attack habilita vantagem.",
+        "Action Surge aumenta muito o burst."
       ],
       "phases": [
         {
-          "label": "Níveis 1–5 — Fúria e Destruição",
-          "range": "1-5",
+          "label": "Níveis 1–4 — Início",
+          "range": "1-4",
           "tag": "early",
           "levels": [
             {
               "level": 1,
-              "attribute": "FOR +16, CON +16, DES +14",
-              "combat": "Bárbaro 1",
-              "talent": null,
-              "skills": [
-                "Fúria"
-              ],
-              "tip": "Fúria: dano extra e resistência a dano físico. Sempre ative antes de atacar.",
-              "isCreation": true
+              "attribute": "FOR +1",
+              "combat": "Barbarian 1",
+              "talent": "Rage",
+              "skills": ["Rage", "Unarmored Defense"],
+              "tip": "Rage define toda a base da build."
             },
             {
               "level": 2,
-              "attribute": "Força",
-              "combat": "Bárbaro 2",
-              "talent": null,
-              "skills": [
-                "Ataque Temerário"
-              ],
-              "tip": "⭐ Ataque Temerário = vantagem garantida em todos os ataques. Fundamental para Crítico Brutal."
+              "attribute": "FOR",
+              "combat": "Barbarian 2",
+              "talent": "Reckless Attack",
+              "skills": ["Reckless Attack", "Danger Sense"],
+              "tip": "Reckless ajuda muito a acertar e manter pressão."
             },
             {
               "level": 3,
-              "attribute": "Força",
-              "combat": "Bárbaro 3",
-              "talent": null,
-              "skills": [
-                "Frenesi"
-              ],
-              "tip": "⭐ Berserker! Frenesi = ataque bônus extra. 3 ataques desde o nível 3!"
+              "attribute": "FOR",
+              "combat": "Barbarian 3",
+              "talent": "Berserker",
+              "skills": ["Frenzy", "Enraged Throw"],
+              "tip": "Enraged Throw é excelente por muito tempo."
             },
             {
               "level": 4,
-              "attribute": "Força",
-              "combat": "Bárbaro 4",
-              "talent": "Mestre de Arma de Duas Mãos",
-              "skills": [],
-              "tip": "⭐ -5 acerto, +10 dano. Com vantagem de Ataque Temerário compensa perfeitamente."
-            },
-            {
-              "level": 5,
-              "attribute": "Força",
-              "combat": "Bárbaro 5",
-              "talent": null,
-              "skills": [
-                "Ataque Extra",
-                "Movimento Rápido"
-              ],
-              "tip": "Ataque Extra: 2 ataques por ação + Frenesi = 3 ataques/turno. +3m de movimento bonus."
+              "attribute": "FOR +2",
+              "combat": "Barbarian 4",
+              "talent": "Tavern Brawler",
+              "skills": ["Feat: Tavern Brawler"],
+              "tip": "Essencial para a versão de arremesso."
             }
           ]
         },
         {
-          "label": "Níveis 6–9 — Resistência Máxima",
-          "range": "6-9",
+          "label": "Níveis 5–8 — Desenvolvimento",
+          "range": "5-8",
           "tag": "mid",
           "levels": [
             {
-              "level": 6,
-              "attribute": "Força",
-              "combat": "Bárbaro 6",
+              "level": 5,
+              "attribute": "FOR",
+              "combat": "Barbarian 5",
               "talent": null,
-              "skills": [
-                "Fúria Cega"
-              ],
-              "tip": "Fúria Cega: imune a encanto e medo durante a Fúria. Muito útil em Tactician."
+              "skills": ["Extra Attack", "Fast Movement"],
+              "tip": "Grande spike do Bárbaro."
+            },
+            {
+              "level": 6,
+              "attribute": "FOR",
+              "combat": "Barbarian 6",
+              "talent": "Mindless Rage",
+              "skills": ["Mindless Rage"],
+              "tip": "Ótimo contra fear e charm."
             },
             {
               "level": 7,
-              "attribute": "Força",
-              "combat": "Bárbaro 7",
-              "talent": null,
-              "skills": [
-                "Instinto Selvagem"
-              ],
-              "tip": "Instinto Selvagem: +3 iniciativa. Age mais cedo = faz Fúria antes dos inimigos agirem."
+              "attribute": "FOR",
+              "combat": "Fighter 1",
+              "talent": "Thrown Weapon Fighting",
+              "skills": ["Second Wind"],
+              "tip": "Fighter melhora a versão arremesso."
             },
             {
               "level": 8,
-              "attribute": "Força",
-              "combat": "Bárbaro 8",
-              "talent": "Melhoria de Atributo (+2 FOR → 18)",
-              "skills": [],
-              "tip": "FOR 18 = mais acerto e dano em todos os ataques. Essencial agora."
-            },
-            {
-              "level": 9,
-              "attribute": "Força",
-              "combat": "Bárbaro 9",
-              "talent": null,
-              "skills": [
-                "Crítico Brutal"
-              ],
-              "tip": "Crítico Brutal: um dado extra de dano em críticos. Com vantagem constante, critica bastante."
+              "attribute": "CON +2",
+              "combat": "Fighter 2",
+              "talent": "Action Surge",
+              "skills": ["Action Surge"],
+              "tip": "Explosão extra no turno decisivo."
             }
           ]
         },
         {
-          "label": "Níveis 10–12 — Imortalidade",
-          "range": "10-12",
+          "label": "Níveis 9–12 — Finalização",
+          "range": "9-12",
           "tag": "late",
           "levels": [
             {
+              "level": 9,
+              "attribute": "CON",
+              "combat": "Fighter 3",
+              "talent": "Champion",
+              "skills": ["Improved Critical"],
+              "tip": "Champion simplifica e melhora a build."
+            },
+            {
               "level": 10,
-              "attribute": "Constituição",
-              "combat": "Bárbaro 10",
-              "talent": null,
-              "skills": [
-                "Presença Intimidadora"
-              ],
-              "tip": "Presença Intimidadora: assustar inimigo como ação. Útil para controlar alvos fortes."
+              "attribute": "CON",
+              "combat": "Fighter 4",
+              "talent": "Ability Improvement",
+              "skills": ["Feat: +2 Constitution"],
+              "tip": "Mais vida e estabilidade."
             },
             {
               "level": 11,
-              "attribute": "Força",
-              "combat": "Bárbaro 11",
-              "talent": null,
-              "skills": [
-                "Fúria Implacável"
-              ],
-              "tip": "⭐ Fúria Implacável: quando cai a 0 PV, faz teste para continuar com 1 PV. Quase imortal!"
+              "attribute": "CON",
+              "combat": "Barbarian 7",
+              "talent": "Feral Instinct",
+              "skills": ["Feral Instinct"],
+              "tip": "Agir antes importa muito para Karlach."
             },
             {
               "level": 12,
-              "attribute": "Força",
-              "combat": "Bárbaro 12",
-              "talent": "Melhoria de Atributo (+2 FOR → 20)",
-              "skills": [],
-              "tip": "⭐ FOR 20! Força máxima. Build completa. A Karlach mais destrutível possível."
+              "attribute": "FOR +1 / CON +1",
+              "combat": "Barbarian 8",
+              "talent": "Great Weapon Master",
+              "skills": ["Feat: Great Weapon Master"],
+              "tip": "Fechamento forte para a variante mais melee."
             }
           ]
         }
@@ -590,281 +491,656 @@
     {
       "id": "shadowheart",
       "name": "Shadowheart",
-      "icon": "✝️",
-      "class": "Clériga",
-      "subclass": "Domínio da Vida",
-      "role": "Curandeira / Suporte",
-      "race": "Meio-Elfa (Alta)",
-      "primaryDamage": "Radiant / Healing",
+      "icon": "✨",
+      "class": "Cleric",
+      "subclass": "Life Domain",
+      "role": "Support / Control",
+      "race": "Half-Elf",
+      "color": "#8fb1ff",
+      "description": "Build detalhada para Shadowheart com foco em progressão estável e forte sinergia de party.",
+      "primaryDamage": "Radiant + Support",
       "primaryAttribute": "Sabedoria",
-      "color": "#5a3a8c",
-      "description": "Curandeira imortal. Guardiões Espirituais faz ela virar um helicóptero de dano radiante que cura a party.",
       "baseStats": {
         "FOR": 10,
-        "DES": 10,
-        "CON": 14,
-        "INT": 10,
-        "SAB": 16,
-        "CAR": 14
+        "DES": 14,
+        "CON": 16,
+        "INT": 8,
+        "SAB": 17,
+        "CAR": 10
       },
       "keyAbilities": [
-        "Discípula da Vida",
-        "Canalizar Divindade",
-        "Guardiões Espirituais",
-        "Palavra de Cura"
+        "Bless",
+        "Channel Divinity",
+        "Spirit Guardians",
+        "Mass Healing Word",
+        "Divine Intervention"
       ],
       "keySpells": [
-        "Bênção",
-        "Palavra de Cura",
-        "Arma Espiritual",
-        "Guardiões Espirituais",
-        "Cura de Ferimentos em Massa"
+        "Bless",
+        "Healing Word",
+        "Aid",
+        "Spirit Guardians",
+        "Mass Cure Wounds",
+        "Guiding Bolt"
       ],
       "equipment": [
-        {
-          "name": "Sangue de Lathander",
-          "note": "Revive ao chegar a 0 PV (1×/dia)"
-        },
-        {
-          "name": "Armadura Média",
-          "note": "Boa CA sem perder mobilidade"
-        },
-        {
-          "name": "Escudo",
-          "note": "+2 CA"
-        },
-        {
-          "name": "Amuleto de Restauração",
-          "note": "Cura extra"
-        }
+        "Shield",
+        "Support items",
+        "Healing gear",
+        "Defensive armor"
       ],
       "comboCombate": [
-        "Bênção no início de cada combate",
-        "Guardiões Espirituais + andar pelo campo = dano passivo",
-        "Palavra de Cura como ação bônus à distância",
-        "Arma Espiritual = ataque bônus sem concentração"
+        "Abra com Bless ou Aid.",
+        "Spirit Guardians é a principal pressão do mid game.",
+        "Healing Word levanta aliados.",
+        "Life Cleric puro simplifica muito a companion."
       ],
       "phases": [
         {
-          "label": "Níveis 1–5 — Fundação Clériga",
-          "range": "1-5",
+          "label": "Níveis 1–4 — Início",
+          "range": "1-4",
           "tag": "early",
           "levels": [
             {
               "level": 1,
-              "attribute": "SAB +16, CON +14, CAR +14",
-              "combat": "Clériga 1",
-              "talent": null,
-              "skills": [
-                "Domínio da Vida",
-                "Discípula da Vida"
-              ],
-              "tip": "Domínio da Vida: cura extra em todas as magias de cura. Base do kit de suporte.",
-              "isCreation": true
+              "attribute": "SAB +1",
+              "combat": "Cleric 1",
+              "talent": "Life Domain",
+              "skills": ["Bless", "Healing Word", "Cure Wounds"],
+              "tip": "Life Domain aumenta o valor de cada cura desde o começo."
             },
             {
               "level": 2,
-              "attribute": "Sabedoria",
-              "combat": "Clériga 2",
-              "talent": null,
-              "skills": [
-                "Preservar Vida"
-              ],
-              "tip": "⭐ Canalizar Divindade: Preservar Vida restaura PV massivos em área. Melhor cura em grupo."
+              "attribute": "SAB",
+              "combat": "Cleric 2",
+              "talent": "Channel Divinity",
+              "skills": ["Preserve Life"],
+              "tip": "Preserve Life salva lutas difíceis."
             },
             {
               "level": 3,
-              "attribute": "Sabedoria",
-              "combat": "Clériga 3",
+              "attribute": "SAB",
+              "combat": "Cleric 3",
               "talent": null,
-              "skills": [
-                "Arma Espiritual",
-                "Silêncio",
-                "Restauração Menor"
-              ],
-              "tip": "Arma Espiritual: ataque bônus todo turno sem usar concentração. DPS passivo."
+              "skills": ["Aid", "Lesser Restoration", "Spiritual Weapon"],
+              "tip": "Aid e Spiritual Weapon entregam muito valor."
             },
             {
               "level": 4,
-              "attribute": "Sabedoria",
-              "combat": "Clériga 4",
-              "talent": "Melhoria de Atributo (+2 SAB → 18)",
-              "skills": [],
-              "tip": "SAB 18 = melhor acerto em magias e curas mais fortes. Prioridade máxima."
-            },
-            {
-              "level": 5,
-              "attribute": "Sabedoria",
-              "combat": "Clériga 5",
-              "talent": null,
-              "skills": [
-                "Guardiões Espirituais"
-              ],
-              "tip": "⭐ Guardiões Espirituais! 🚁 Dano radiante em área ao redor. Ande pelo campo de batalha!"
+              "attribute": "SAB +2",
+              "combat": "Cleric 4",
+              "talent": "Ability Improvement",
+              "skills": ["Feat: +2 Wisdom"],
+              "tip": "Suba Wisdom cedo."
             }
           ]
         },
         {
-          "label": "Níveis 6–9 — Helicóptero Sagrado",
-          "range": "6-9",
+          "label": "Níveis 5–8 — Desenvolvimento",
+          "range": "5-8",
           "tag": "mid",
           "levels": [
             {
-              "level": 6,
-              "attribute": "Sabedoria",
-              "combat": "Clériga 6",
+              "level": 5,
+              "attribute": "SAB",
+              "combat": "Cleric 5",
               "talent": null,
-              "skills": [
-                "Curandeira Abençoada"
-              ],
-              "tip": "Curandeira Abençoada: cura a si mesma quando cura outros. Sustentabilidade enorme."
+              "skills": ["Spirit Guardians", "Mass Healing Word"],
+              "tip": "Esse é o grande spike da build."
+            },
+            {
+              "level": 6,
+              "attribute": "SAB",
+              "combat": "Cleric 6",
+              "talent": "Blessed Healer",
+              "skills": ["Channel Divinity 2"],
+              "tip": "Shadowheart vira uma âncora de sustain."
             },
             {
               "level": 7,
-              "attribute": "Sabedoria",
-              "combat": "Clériga 7",
+              "attribute": "SAB",
+              "combat": "Cleric 7",
               "talent": null,
-              "skills": [
-                "Sentinela da Morte",
-                "Guardião da Fé"
-              ],
-              "tip": "Sentinela da Morte: evita morte de aliado próximo. Guardião da Fé: dano radiante automático."
+              "skills": ["Freedom of Movement", "Guardian of Faith"],
+              "tip": "Boa utilidade e proteção no ato 2/3."
             },
             {
               "level": 8,
-              "attribute": "Sabedoria",
-              "combat": "Clériga 8",
-              "talent": "Conjurador de Guerra",
-              "skills": [],
-              "tip": "⭐ Conjurador de Guerra: vantagem em testes de concentração. Guardiões Espirituais dura mais."
-            },
-            {
-              "level": 9,
-              "attribute": "Sabedoria",
-              "combat": "Clériga 9",
-              "talent": null,
-              "skills": [
-                "Cura de Ferimentos em Massa",
-                "Restauração Maior"
-              ],
-              "tip": "Cura de Ferimentos em Massa: cura até 6 aliados com uma magia. Slot 5 bem gasto."
+              "attribute": "SAB +1 / CON +1",
+              "combat": "Cleric 8",
+              "talent": "War Caster",
+              "skills": ["Feat: War Caster", "Divine Strike"],
+              "tip": "Segurar Spirit Guardians importa muito."
             }
           ]
         },
         {
-          "label": "Níveis 10–12 — Finalização",
-          "range": "10-12",
+          "label": "Níveis 9–12 — Finalização",
+          "range": "9-12",
           "tag": "late",
           "levels": [
             {
-              "level": 10,
-              "attribute": "Sabedoria",
-              "combat": "Clériga 10",
+              "level": 9,
+              "attribute": "SAB",
+              "combat": "Cleric 9",
               "talent": null,
               "skills": [
-                "Intervenção Divina"
+                "Mass Cure Wounds",
+                "Flame Strike",
+                "Greater Restoration"
               ],
-              "tip": "Intervenção Divina: uso único poderoso. Pode virar um combate inteiro por si só."
+              "tip": "Ferramentas para quase qualquer situação."
+            },
+            {
+              "level": 10,
+              "attribute": "SAB",
+              "combat": "Cleric 10",
+              "talent": "Divine Intervention",
+              "skills": ["Divine Intervention"],
+              "tip": "Guarde para um momento decisivo."
             },
             {
               "level": 11,
-              "attribute": "Sabedoria",
-              "combat": "Clériga 11",
+              "attribute": "SAB",
+              "combat": "Cleric 11",
               "talent": null,
-              "skills": [
-                "Curar",
-                "Banquete dos Heróis"
-              ],
-              "tip": "Curar: restaura 70 PV com uma magia. Banquete dos Heróis: buffs permanentes por dia."
+              "skills": ["Heal", "Heroes’ Feast"],
+              "tip": "Late game muito confortável."
             },
             {
               "level": 12,
-              "attribute": "Sabedoria",
-              "combat": "Clériga 12",
-              "talent": "Resiliente (CON)",
-              "skills": [],
-              "tip": "Resiliente CON: proficiência em saves de Constituição. Raramente perde concentração."
+              "attribute": "SAB +2",
+              "combat": "Cleric 12",
+              "talent": "Alert",
+              "skills": ["Feat: Alert"],
+              "tip": "Agir cedo para buffar ou controlar vale muito."
             }
           ]
         }
       ]
-    }
-  ],
-  "companions": [
+    },
     {
       "id": "astarion",
       "name": "Astarion",
       "icon": "🗡️",
-      "class": "Rogue",
-      "subclass": "Assassin",
-      "role": "DPS Furtivo",
-      "race": "Vampiro (High Elf)",
-      "color": "#6a1a3a",
-      "description": "Mestre do stealth e dano crítico. Assassin garante critical hit em inimigos surpresos.",
-      "levelSummary": {
-        "1": "Rogue básico. Sneak Attack 1d6. Stealth é sua arma.",
-        "2": "⭐ Cunning Action. Hide como ação bônus!",
-        "3": "⭐ Assassin! Crítico garantido em inimigos surpresos.",
-        "4": "⭐ Sharpshooter ou +2 DES. Dano massivo.",
-        "5": "Sneak Attack 3d6 + Uncanny Dodge.",
-        "6": "Expertise extra.",
-        "7": "Evasion. Dano de área reduzido pela metade.",
-        "8": "+2 DES → 20 ou Alert.",
-        "9": "Sneak Attack 5d6.",
-        "10": "Talento extra.",
-        "11": "Reliable Talent. Mínimo 10 nos dados.",
-        "12": "Sneak Attack 6d6. Build completa."
-      }
+      "class": "Rogue / Ranger / Fighter",
+      "subclass": "Assassin / Gloom Stalker / Champion",
+      "role": "Alpha Strike",
+      "race": "Elf",
+      "color": "#b978d6",
+      "description": "Build detalhada para Astarion com foco em progressão estável e forte sinergia de party.",
+      "primaryDamage": "Physical",
+      "primaryAttribute": "Destreza",
+      "baseStats": {
+        "FOR": 8,
+        "DES": 17,
+        "CON": 14,
+        "INT": 10,
+        "SAB": 14,
+        "CAR": 10
+      },
+      "keyAbilities": [
+        "Sneak Attack",
+        "Dread Ambusher",
+        "Assassinate",
+        "Action Surge",
+        "Sharpshooter"
+      ],
+      "keySpells": ["Hunter’s Mark", "Disguise Self", "Longstrider"],
+      "equipment": ["Longbow", "Light armor", "Crit gear", "Stealth items"],
+      "comboCombate": [
+        "Inicie de stealth sempre que possível.",
+        "Primeiro turno é seu mais forte.",
+        "Sharpshooter rende muito com vantagem.",
+        "Delete casters e arqueiros cedo."
+      ],
+      "phases": [
+        {
+          "label": "Níveis 1–4 — Início",
+          "range": "1-4",
+          "tag": "early",
+          "levels": [
+            {
+              "level": 1,
+              "attribute": "DES +1",
+              "combat": "Rogue 1",
+              "talent": "Sneak Attack",
+              "skills": ["Sneak Attack", "Stealth Expertise"],
+              "tip": "Rogue inicial dá skill coverage e bom dano."
+            },
+            {
+              "level": 2,
+              "attribute": "DES",
+              "combat": "Rogue 2",
+              "talent": "Cunning Action",
+              "skills": ["Dash", "Hide", "Disengage"],
+              "tip": "Reposicionamento é parte da sobrevivência do Astarion."
+            },
+            {
+              "level": 3,
+              "attribute": "DES",
+              "combat": "Ranger 1",
+              "talent": "Favoured Enemy",
+              "skills": ["Longstrider", "Ensnaring Strike"],
+              "tip": "Começa a transição para Gloom Stalker."
+            },
+            {
+              "level": 4,
+              "attribute": "DES",
+              "combat": "Ranger 2",
+              "talent": "Archery",
+              "skills": ["Hunter’s Mark"],
+              "tip": "Archery Style ajuda demais a build."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 5–8 — Desenvolvimento",
+          "range": "5-8",
+          "tag": "mid",
+          "levels": [
+            {
+              "level": 5,
+              "attribute": "DES",
+              "combat": "Ranger 3",
+              "talent": "Gloom Stalker",
+              "skills": ["Dread Ambusher", "Disguise Self"],
+              "tip": "Spike enorme de iniciativa e opener."
+            },
+            {
+              "level": 6,
+              "attribute": "DES +2",
+              "combat": "Ranger 4",
+              "talent": "Sharpshooter",
+              "skills": ["Feat: Sharpshooter"],
+              "tip": "Sharpshooter é prioridade assim que ficar confiável."
+            },
+            {
+              "level": 7,
+              "attribute": "DES",
+              "combat": "Ranger 5",
+              "talent": null,
+              "skills": ["Extra Attack", "Misty Step"],
+              "tip": "Extra Attack fecha o núcleo ranger."
+            },
+            {
+              "level": 8,
+              "attribute": "DES",
+              "combat": "Rogue 3",
+              "talent": "Assassin",
+              "skills": ["Assassinate"],
+              "tip": "Assassin amplifica demais o turno 1."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 9–12 — Finalização",
+          "range": "9-12",
+          "tag": "late",
+          "levels": [
+            {
+              "level": 9,
+              "attribute": "DES",
+              "combat": "Rogue 4",
+              "talent": "Ability Improvement",
+              "skills": ["Feat: +2 Dexterity"],
+              "tip": "Maximize Dexterity."
+            },
+            {
+              "level": 10,
+              "attribute": "CON",
+              "combat": "Fighter 1",
+              "talent": "Defense",
+              "skills": ["Second Wind"],
+              "tip": "Fighter prepara um fechamento forte."
+            },
+            {
+              "level": 11,
+              "attribute": "CON",
+              "combat": "Fighter 2",
+              "talent": "Action Surge",
+              "skills": ["Action Surge"],
+              "tip": "Action Surge explode o alpha strike."
+            },
+            {
+              "level": 12,
+              "attribute": "CON",
+              "combat": "Fighter 3",
+              "talent": "Champion",
+              "skills": ["Improved Critical"],
+              "tip": "Fechamento simples e eficiente."
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "gale",
       "name": "Gale",
-      "icon": "✨",
+      "icon": "📘",
       "class": "Wizard",
       "subclass": "Evocation",
-      "role": "DPS Mágico",
-      "race": "Humano",
-      "color": "#1a5a8c",
-      "description": "Fireball go brrr. Sculpt Spells permite lançar feitiços em área sem acertar aliados.",
-      "levelSummary": {
-        "1": "Wizard básico. Magic Missile e Shield.",
-        "2": "⭐ Evocation! Sculpt Spells não acerta aliados.",
-        "3": "Fireball e Counterspell disponíveis!",
-        "4": "+2 INT → 18 ou War Caster.",
-        "5": "⭐ FIREBALL! Dano de área devastador.",
-        "6": "Potent Cantrip.",
-        "7": "Conjure Elemental.",
-        "8": "+2 INT → 20.",
-        "9": "Wall of Force.",
-        "10": "Empowered Evocation. +INT no dano.",
-        "11": "Chain Lightning. Nível 6.",
-        "12": "Build completa. Mago devastador."
-      }
+      "role": "Caster / AoE",
+      "race": "Human",
+      "color": "#5f8dff",
+      "description": "Build detalhada para Gale com foco em progressão estável e forte sinergia de party.",
+      "primaryDamage": "Magical",
+      "primaryAttribute": "Inteligência",
+      "baseStats": {
+        "FOR": 8,
+        "DES": 14,
+        "CON": 16,
+        "INT": 17,
+        "SAB": 10,
+        "CAR": 10
+      },
+      "keyAbilities": [
+        "Arcane Recovery",
+        "Sculpt Spells",
+        "Fireball",
+        "Counterspell",
+        "Chain Lightning"
+      ],
+      "keySpells": [
+        "Magic Missile",
+        "Shield",
+        "Misty Step",
+        "Fireball",
+        "Counterspell",
+        "Haste"
+      ],
+      "equipment": ["Staff", "Robes", "Spell DC gear", "Arcane Acuity items"],
+      "comboCombate": [
+        "Use Fireball quando o cenário pedir explosão.",
+        "Sculpt Spells reduz o risco em AoE.",
+        "Counterspell e Shield são essenciais.",
+        "Haste também pode ser melhor que dano bruto em certas lutas."
+      ],
+      "phases": [
+        {
+          "label": "Níveis 1–4 — Início",
+          "range": "1-4",
+          "tag": "early",
+          "levels": [
+            {
+              "level": 1,
+              "attribute": "INT +1",
+              "combat": "Wizard 1",
+              "talent": null,
+              "skills": ["Magic Missile", "Shield", "Mage Armour"],
+              "tip": "Base extremamente eficiente para o começo do jogo."
+            },
+            {
+              "level": 2,
+              "attribute": "INT",
+              "combat": "Wizard 2",
+              "talent": "Evocation School",
+              "skills": ["Sculpt Spells"],
+              "tip": "Evocation simplifica muito o uso de área."
+            },
+            {
+              "level": 3,
+              "attribute": "INT",
+              "combat": "Wizard 3",
+              "talent": null,
+              "skills": ["Misty Step", "Scorching Ray"],
+              "tip": "Mobilidade e burst pontual entram cedo."
+            },
+            {
+              "level": 4,
+              "attribute": "INT +2",
+              "combat": "Wizard 4",
+              "talent": "Ability Improvement",
+              "skills": ["Feat: +2 Intelligence"],
+              "tip": "Maximizar INT cedo vale muito."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 5–8 — Desenvolvimento",
+          "range": "5-8",
+          "tag": "mid",
+          "levels": [
+            {
+              "level": 5,
+              "attribute": "INT",
+              "combat": "Wizard 5",
+              "talent": null,
+              "skills": ["Fireball", "Counterspell", "Haste"],
+              "tip": "O grande spike de Gale chega aqui."
+            },
+            {
+              "level": 6,
+              "attribute": "INT",
+              "combat": "Wizard 6",
+              "talent": "Potent Cantrip",
+              "skills": ["Potent Cantrip"],
+              "tip": "Mais consistência fora do gasto de slots."
+            },
+            {
+              "level": 7,
+              "attribute": "INT",
+              "combat": "Wizard 7",
+              "talent": null,
+              "skills": ["Ice Storm", "Dimension Door"],
+              "tip": "Boa mistura de controle e mobilidade."
+            },
+            {
+              "level": 8,
+              "attribute": "INT +1 / CON +1",
+              "combat": "Wizard 8",
+              "talent": "War Caster",
+              "skills": ["Feat: War Caster"],
+              "tip": "Ótimo se você usa Haste com frequência."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 9–12 — Finalização",
+          "range": "9-12",
+          "tag": "late",
+          "levels": [
+            {
+              "level": 9,
+              "attribute": "INT",
+              "combat": "Wizard 9",
+              "talent": null,
+              "skills": ["Cone of Cold", "Hold Monster"],
+              "tip": "Mais força em controle e burst."
+            },
+            {
+              "level": 10,
+              "attribute": "INT",
+              "combat": "Wizard 10",
+              "talent": "Empowered Evocation",
+              "skills": ["Empowered Evocation"],
+              "tip": "Eleva muito o dano da build."
+            },
+            {
+              "level": 11,
+              "attribute": "INT",
+              "combat": "Wizard 11",
+              "talent": null,
+              "skills": ["Chain Lightning", "Globe of Invulnerability"],
+              "tip": "Late game mágico excelente."
+            },
+            {
+              "level": 12,
+              "attribute": "INT +2",
+              "combat": "Wizard 12",
+              "talent": "Alert",
+              "skills": ["Feat: Alert"],
+              "tip": "Agir cedo para controlar ou explodir vale muito."
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "wyll",
       "name": "Wyll",
-      "icon": "😈",
+      "icon": "🌀",
       "class": "Warlock",
       "subclass": "The Fiend / Pact of the Blade",
-      "role": "DPS Ranged / Melee",
-      "race": "Humano",
-      "color": "#5a1a8c",
-      "description": "Eldritch Blast é o cantrip mais forte do jogo. Pact of the Blade para melee com CAR.",
-      "levelSummary": {
-        "1": "Eldritch Blast + Dark One's Blessing.",
-        "2": "⭐ Agonizing Blast! +CAR no dano.",
-        "3": "⭐ Pact of the Blade. Arma mágica com CAR!",
-        "4": "+2 CAR → 18.",
-        "5": "Eldritch Blast 2 raios + Thirsting Blade.",
-        "6": "Dark One's Own Luck.",
-        "7": "Hunger of Hadar. Dano contínuo.",
-        "8": "+2 CAR → 20.",
-        "9": "Eldritch Blast 3 raios.",
-        "10": "Lifedrinker. +CAR no dano da arma.",
-        "11": "Mystic Arcanum. Magia de 6º nível.",
-        "12": "Eldritch Blast 4 raios. Build completa!"
-      }
+      "role": "Gish / Blaster",
+      "race": "Human",
+      "color": "#7f5cff",
+      "description": "Build detalhada para Wyll com foco em progressão estável e forte sinergia de party.",
+      "primaryDamage": "Magical + Physical",
+      "primaryAttribute": "Carisma",
+      "baseStats": {
+        "FOR": 8,
+        "DES": 14,
+        "CON": 16,
+        "INT": 10,
+        "SAB": 10,
+        "CAR": 17
+      },
+      "keyAbilities": [
+        "Eldritch Blast",
+        "Hex",
+        "Pact of the Blade",
+        "Darkness",
+        "Lifedrinker"
+      ],
+      "keySpells": [
+        "Hex",
+        "Armour of Agathys",
+        "Darkness",
+        "Counterspell",
+        "Hunger of Hadar"
+      ],
+      "equipment": [
+        "Rapier or pact weapon",
+        "Charisma gear",
+        "Spell attack items",
+        "Defensive cloak"
+      ],
+      "comboCombate": [
+        "Abra com Hex ou controle.",
+        "Eldritch Blast cobre o ranged game.",
+        "Pact of the Blade permite alternar para melee.",
+        "Warlock puro é ótimo com short rests."
+      ],
+      "phases": [
+        {
+          "label": "Níveis 1–4 — Início",
+          "range": "1-4",
+          "tag": "early",
+          "levels": [
+            {
+              "level": 1,
+              "attribute": "CAR +1",
+              "combat": "Warlock 1",
+              "talent": "The Fiend",
+              "skills": ["Eldritch Blast", "Hex", "Armour of Agathys"],
+              "tip": "Base sólida e prática para companion."
+            },
+            {
+              "level": 2,
+              "attribute": "CAR",
+              "combat": "Warlock 2",
+              "talent": "Agonizing Blast",
+              "skills": ["Agonizing Blast", "Repelling Blast"],
+              "tip": "Agonizing Blast é prioridade máxima."
+            },
+            {
+              "level": 3,
+              "attribute": "CAR",
+              "combat": "Warlock 3",
+              "talent": "Pact of the Blade",
+              "skills": ["Pact of the Blade", "Darkness"],
+              "tip": "Fechamento do núcleo gish."
+            },
+            {
+              "level": 4,
+              "attribute": "CAR +2",
+              "combat": "Warlock 4",
+              "talent": "Ability Improvement",
+              "skills": ["Feat: +2 Charisma"],
+              "tip": "Mais Charisma em tudo que importa."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 5–8 — Desenvolvimento",
+          "range": "5-8",
+          "tag": "mid",
+          "levels": [
+            {
+              "level": 5,
+              "attribute": "CAR",
+              "combat": "Warlock 5",
+              "talent": null,
+              "skills": ["Hunger of Hadar", "Counterspell"],
+              "tip": "Utilidade tática excelente no mid game."
+            },
+            {
+              "level": 6,
+              "attribute": "CAR",
+              "combat": "Warlock 6",
+              "talent": "Dark One’s Own Luck",
+              "skills": ["Dark One’s Own Luck"],
+              "tip": "Boa segurança contra saves perigosos."
+            },
+            {
+              "level": 7,
+              "attribute": "CAR",
+              "combat": "Warlock 7",
+              "talent": null,
+              "skills": ["Fire Shield", "Banishment"],
+              "tip": "Adapte conforme o estilo da party."
+            },
+            {
+              "level": 8,
+              "attribute": "CAR +1 / CON +1",
+              "combat": "Warlock 8",
+              "talent": "Spell Sniper",
+              "skills": ["Feat: Spell Sniper"],
+              "tip": "Boa escolha para reforçar o lado caster."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 9–12 — Finalização",
+          "range": "9-12",
+          "tag": "late",
+          "levels": [
+            {
+              "level": 9,
+              "attribute": "CAR",
+              "combat": "Warlock 9",
+              "talent": null,
+              "skills": ["Hold Monster"],
+              "tip": "Excelente setup para burst da party."
+            },
+            {
+              "level": 10,
+              "attribute": "CAR",
+              "combat": "Warlock 10",
+              "talent": "Fiendish Resilience",
+              "skills": ["Fiendish Resilience"],
+              "tip": "Mais estabilidade para encontros duros."
+            },
+            {
+              "level": 11,
+              "attribute": "CAR",
+              "combat": "Warlock 11",
+              "talent": "Mystic Arcanum",
+              "skills": ["Circle of Death", "Mystic Arcanum"],
+              "tip": "Pico de magia alta do Warlock puro."
+            },
+            {
+              "level": 12,
+              "attribute": "CAR +2",
+              "combat": "Warlock 12",
+              "talent": "Lifedrinker",
+              "skills": ["Lifedrinker"],
+              "tip": "Ótimo fechamento para a versão blade."
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "halsin",
@@ -872,99 +1148,647 @@
       "icon": "🐻",
       "class": "Druid",
       "subclass": "Circle of the Moon",
-      "role": "Tanque / Suporte",
-      "race": "Wood Elf",
-      "color": "#2a6a2a",
-      "description": "Mestre das formas selvagens. Forma de Urso Polar é um tanque com HP massivo.",
-      "levelSummary": {
-        "1": "Wild Shape e Healing Word.",
-        "2": "⭐ Moon Druid! Combat Wild Shape cura.",
-        "3": "Wild Shape: Bear. Tanque massivo!",
-        "4": "+2 SAB → 18.",
-        "5": "Conjure Animals.",
-        "6": "Primal Strike. Dano mágico em forma animal.",
-        "7": "Conjure Woodland Beings.",
-        "8": "+2 SAB → 20.",
-        "9": "Wild Shape: Elemental.",
-        "10": "Elemental Wild Shape.",
-        "11": "Heal.",
-        "12": "Build completa. Tanque + healer."
-      }
+      "role": "Wild Shape / Control",
+      "race": "Elf",
+      "color": "#4aa36b",
+      "description": "Build detalhada para Halsin com foco em progressão estável e forte sinergia de party.",
+      "primaryDamage": "Magical + Wild Shape",
+      "primaryAttribute": "Sabedoria",
+      "baseStats": {
+        "FOR": 10,
+        "DES": 14,
+        "CON": 16,
+        "INT": 8,
+        "SAB": 17,
+        "CAR": 10
+      },
+      "keyAbilities": [
+        "Wild Shape",
+        "Owlbear Form",
+        "Call Lightning",
+        "Conjure Woodland Being",
+        "Heroes’ Feast"
+      ],
+      "keySpells": [
+        "Faerie Fire",
+        "Spike Growth",
+        "Call Lightning",
+        "Moonbeam",
+        "Wall of Fire",
+        "Heroes’ Feast"
+      ],
+      "equipment": [
+        "Spell DC gear",
+        "Defensive amulet",
+        "Caster staff",
+        "Useful robes"
+      ],
+      "comboCombate": [
+        "Wild Shape para tankar.",
+        "Call Lightning para lutas abertas.",
+        "Spike Growth continua absurdamente bom.",
+        "Alterna entre summon, controle e forma animal."
+      ],
+      "phases": [
+        {
+          "label": "Níveis 1–4 — Início",
+          "range": "1-4",
+          "tag": "early",
+          "levels": [
+            {
+              "level": 1,
+              "attribute": "SAB +1",
+              "combat": "Druid 1",
+              "talent": null,
+              "skills": ["Faerie Fire", "Thunderwave"],
+              "tip": "Faerie Fire ajuda muito a party logo cedo."
+            },
+            {
+              "level": 2,
+              "attribute": "SAB",
+              "combat": "Druid 2",
+              "talent": "Circle of the Moon",
+              "skills": ["Wild Shape", "Combat Wild Shape"],
+              "tip": "O núcleo da build entra aqui."
+            },
+            {
+              "level": 3,
+              "attribute": "SAB",
+              "combat": "Druid 3",
+              "talent": null,
+              "skills": ["Spike Growth", "Moonbeam"],
+              "tip": "Spike Growth ainda domina muitos encontros."
+            },
+            {
+              "level": 4,
+              "attribute": "SAB +2",
+              "combat": "Druid 4",
+              "talent": "Ability Improvement",
+              "skills": ["Feat: +2 Wisdom"],
+              "tip": "Fortalece o lado caster da build."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 5–8 — Desenvolvimento",
+          "range": "5-8",
+          "tag": "mid",
+          "levels": [
+            {
+              "level": 5,
+              "attribute": "SAB",
+              "combat": "Druid 5",
+              "talent": null,
+              "skills": ["Call Lightning", "Owlbear Form"],
+              "tip": "Grande spike do Moon Druid."
+            },
+            {
+              "level": 6,
+              "attribute": "SAB",
+              "combat": "Druid 6",
+              "talent": "Improved Wild Strike",
+              "skills": ["Improved Forms"],
+              "tip": "Mais consistência no front."
+            },
+            {
+              "level": 7,
+              "attribute": "SAB",
+              "combat": "Druid 7",
+              "talent": null,
+              "skills": ["Conjure Woodland Being", "Ice Storm"],
+              "tip": "Summons trazem muito valor."
+            },
+            {
+              "level": 8,
+              "attribute": "SAB +1 / CON +1",
+              "combat": "Druid 8",
+              "talent": "Alert",
+              "skills": ["Feat: Alert"],
+              "tip": "Agir cedo para controlar faz diferença."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 9–12 — Finalização",
+          "range": "9-12",
+          "tag": "late",
+          "levels": [
+            {
+              "level": 9,
+              "attribute": "SAB",
+              "combat": "Druid 9",
+              "talent": null,
+              "skills": ["Wall of Fire", "Greater Restoration"],
+              "tip": "Mais impacto fora do Wild Shape."
+            },
+            {
+              "level": 10,
+              "attribute": "SAB",
+              "combat": "Druid 10",
+              "talent": "Elemental Shape",
+              "skills": ["Elemental Wild Shape"],
+              "tip": "As formas fortes consolidam a build."
+            },
+            {
+              "level": 11,
+              "attribute": "SAB",
+              "combat": "Druid 11",
+              "talent": null,
+              "skills": ["Heroes’ Feast", "Sunbeam"],
+              "tip": "Late game de altíssimo valor utilitário."
+            },
+            {
+              "level": 12,
+              "attribute": "SAB +2",
+              "combat": "Druid 12",
+              "talent": "War Caster",
+              "skills": ["Feat: War Caster"],
+              "tip": "Ótimo para segurar concentração."
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "minthara",
       "name": "Minthara",
-      "icon": "⚖️",
+      "icon": "🩸",
       "class": "Paladin",
       "subclass": "Oath of Vengeance",
-      "role": "DPS Melee / Suporte",
+      "role": "Burst Frontliner",
       "race": "Drow",
-      "color": "#8c1a5a",
-      "description": "Divine Smite com crítico é devastador. Aura of Protection beneficia toda a party.",
-      "levelSummary": {
-        "1": "Lay on Hands. Cura versátil.",
-        "2": "⭐ Divine Smite! Dano radiante explosivo.",
-        "3": "⭐ Vow of Enmity = vantagem em 1 alvo!",
-        "4": "⭐ Great Weapon Master. +10 dano!",
-        "5": "Extra Attack. 2 Smites por turno!",
-        "6": "⭐ Aura of Protection. Party salva mais.",
-        "7": "Relentless Avenger.",
-        "8": "+2 FOR → 18.",
-        "9": "Blinding Smite.",
-        "10": "Aura of Courage. Imune a medo.",
-        "11": "⭐ Improved Smite! +d8 em todo ataque.",
-        "12": "Build completa. DPS devastador."
-      }
+      "color": "#c13f6b",
+      "description": "Build detalhada para Minthara com foco em progressão estável e forte sinergia de party.",
+      "primaryDamage": "Physical + Radiant",
+      "primaryAttribute": "Carisma",
+      "baseStats": {
+        "FOR": 16,
+        "DES": 10,
+        "CON": 14,
+        "INT": 8,
+        "SAB": 10,
+        "CAR": 16
+      },
+      "keyAbilities": [
+        "Divine Smite",
+        "Vow of Enmity",
+        "Extra Attack",
+        "Aura of Protection",
+        "Improved Divine Smite"
+      ],
+      "keySpells": ["Bless", "Command", "Misty Step", "Hold Person"],
+      "equipment": ["Heavy armor", "Greatsword", "Smite items", "Crit gear"],
+      "comboCombate": [
+        "Use Vow of Enmity em alvo prioritário.",
+        "Gaste slots em smites decisivos.",
+        "Aura beneficia a party inteira.",
+        "Build excelente para dano e segurança."
+      ],
+      "phases": [
+        {
+          "label": "Níveis 1–4 — Início",
+          "range": "1-4",
+          "tag": "early",
+          "levels": [
+            {
+              "level": 1,
+              "attribute": "CAR +1",
+              "combat": "Paladin 1",
+              "talent": null,
+              "skills": ["Lay on Hands", "Divine Sense"],
+              "tip": "Frontliner forte desde o começo."
+            },
+            {
+              "level": 2,
+              "attribute": "CAR",
+              "combat": "Paladin 2",
+              "talent": "Great Weapon Fighting",
+              "skills": ["Divine Smite", "Bless"],
+              "tip": "Burst muito forte logo cedo."
+            },
+            {
+              "level": 3,
+              "attribute": "CAR",
+              "combat": "Paladin 3",
+              "talent": "Oath of Vengeance",
+              "skills": ["Vow of Enmity", "Command"],
+              "tip": "Subclasse simples e muito eficiente."
+            },
+            {
+              "level": 4,
+              "attribute": "CAR +2",
+              "combat": "Paladin 4",
+              "talent": "Ability Improvement",
+              "skills": ["Feat: +2 Charisma"],
+              "tip": "Charisma ajuda aura e magia."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 5–8 — Desenvolvimento",
+          "range": "5-8",
+          "tag": "mid",
+          "levels": [
+            {
+              "level": 5,
+              "attribute": "CAR",
+              "combat": "Paladin 5",
+              "talent": null,
+              "skills": ["Extra Attack", "Misty Step"],
+              "tip": "Grande spike do Paladino."
+            },
+            {
+              "level": 6,
+              "attribute": "CAR",
+              "combat": "Paladin 6",
+              "talent": "Aura of Protection",
+              "skills": ["Aura of Protection"],
+              "tip": "Um dos melhores níveis do jogo."
+            },
+            {
+              "level": 7,
+              "attribute": "CAR",
+              "combat": "Paladin 7",
+              "talent": null,
+              "skills": ["Relentless Avenger"],
+              "tip": "Mantém pressão em lutas móveis."
+            },
+            {
+              "level": 8,
+              "attribute": "FOR +2",
+              "combat": "Paladin 8",
+              "talent": "Great Weapon Master",
+              "skills": ["Feat: Great Weapon Master"],
+              "tip": "Combina bem com vantagem de Vow of Enmity."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 9–12 — Finalização",
+          "range": "9-12",
+          "tag": "late",
+          "levels": [
+            {
+              "level": 9,
+              "attribute": "FOR",
+              "combat": "Paladin 9",
+              "talent": null,
+              "skills": ["Revivify", "Blinding Smite"],
+              "tip": "Mais ferramentas para o fim do jogo."
+            },
+            {
+              "level": 10,
+              "attribute": "FOR",
+              "combat": "Paladin 10",
+              "talent": "Aura of Courage",
+              "skills": ["Aura of Courage"],
+              "tip": "Bom contra fear."
+            },
+            {
+              "level": 11,
+              "attribute": "FOR",
+              "combat": "Paladin 11",
+              "talent": "Improved Divine Smite",
+              "skills": ["Improved Divine Smite"],
+              "tip": "Pico excelente para build marcial divina."
+            },
+            {
+              "level": 12,
+              "attribute": "FOR +2",
+              "combat": "Paladin 12",
+              "talent": "Savage Attacker",
+              "skills": ["Feat: Savage Attacker"],
+              "tip": "Melhora a consistência do dano e dos smites."
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "minsc",
       "name": "Minsc",
-      "icon": "🐹",
+      "icon": "🏹",
       "class": "Ranger",
-      "subclass": "Beast Master",
-      "role": "DPS Melee",
-      "race": "Humano",
-      "color": "#3a6a1a",
-      "description": "O guerreiro lendário com Boo! Beast Master invoca companheiro animal que luta junto.",
-      "levelSummary": {
-        "1": "Ranger básico. Boo ainda não apareceu.",
-        "2": "Two-Weapon Fighting + Hunter's Mark.",
-        "3": "⭐ Beast Master! BOO APARECE! 🐹",
-        "4": "⭐ Dual Wielder. Armas maiores + 1 AC.",
-        "5": "Extra Attack. 3 ataques por turno!",
-        "6": "Coordinated Attack. Boo ataca junto!",
-        "7": "Exceptional Training. Boo mais forte.",
-        "8": "+2 FOR → 18.",
-        "9": "Spells de nível 3.",
-        "10": "Hide in Plain Sight.",
-        "11": "⭐ Bestial Fury. Boo ataca 2x! 🐹🐹",
-        "12": "Build completa. Minsc e Boo imparáveis!"
-      }
+      "subclass": "Hunter",
+      "role": "Archer",
+      "race": "Human",
+      "color": "#6ea85f",
+      "description": "Build detalhada para Minsc com foco em progressão estável e forte sinergia de party.",
+      "primaryDamage": "Physical",
+      "primaryAttribute": "Destreza",
+      "baseStats": {
+        "FOR": 12,
+        "DES": 17,
+        "CON": 14,
+        "INT": 8,
+        "SAB": 14,
+        "CAR": 10
+      },
+      "keyAbilities": [
+        "Hunter’s Mark",
+        "Colossus Slayer",
+        "Extra Attack",
+        "Volley"
+      ],
+      "keySpells": [
+        "Hunter’s Mark",
+        "Longstrider",
+        "Spike Growth",
+        "Conjure Barrage"
+      ],
+      "equipment": ["Longbow", "Ranged gear", "Light armor", "Stealth cloak"],
+      "comboCombate": [
+        "Mantenha distância e high ground.",
+        "Colossus Slayer rende em alvo ferido.",
+        "Hunter’s Mark é melhor em lutas longas.",
+        "Volley fecha bem o late game."
+      ],
+      "phases": [
+        {
+          "label": "Níveis 1–4 — Início",
+          "range": "1-4",
+          "tag": "early",
+          "levels": [
+            {
+              "level": 1,
+              "attribute": "DES +1",
+              "combat": "Ranger 1",
+              "talent": "Favoured Enemy",
+              "skills": ["Hunter’s Mark", "Longstrider"],
+              "tip": "Arqueiro seguro e eficiente desde cedo."
+            },
+            {
+              "level": 2,
+              "attribute": "DES",
+              "combat": "Ranger 2",
+              "talent": "Archery",
+              "skills": ["Archery Fighting Style"],
+              "tip": "Archery Style é prioridade."
+            },
+            {
+              "level": 3,
+              "attribute": "DES",
+              "combat": "Ranger 3",
+              "talent": "Hunter",
+              "skills": ["Colossus Slayer"],
+              "tip": "Dano extra simples e ótimo."
+            },
+            {
+              "level": 4,
+              "attribute": "DES +2",
+              "combat": "Ranger 4",
+              "talent": "Sharpshooter",
+              "skills": ["Feat: Sharpshooter"],
+              "tip": "Sharpshooter sobe muito o teto da build."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 5–8 — Desenvolvimento",
+          "range": "5-8",
+          "tag": "mid",
+          "levels": [
+            {
+              "level": 5,
+              "attribute": "DES",
+              "combat": "Ranger 5",
+              "talent": null,
+              "skills": ["Extra Attack", "Misty Step"],
+              "tip": "Pico central do ranger."
+            },
+            {
+              "level": 6,
+              "attribute": "DES",
+              "combat": "Ranger 6",
+              "talent": null,
+              "skills": ["Favoured Enemy improvement"],
+              "tip": "Nível mais estável e de gear upgrades."
+            },
+            {
+              "level": 7,
+              "attribute": "DES",
+              "combat": "Ranger 7",
+              "talent": "Defensive Tactics",
+              "skills": ["Escape the Horde"],
+              "tip": "Mais segurança para manter distância."
+            },
+            {
+              "level": 8,
+              "attribute": "DES +1 / CON +1",
+              "combat": "Ranger 8",
+              "talent": "Ability Improvement",
+              "skills": ["Feat: +2 Dexterity"],
+              "tip": "Maximize Dexterity."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 9–12 — Finalização",
+          "range": "9-12",
+          "tag": "late",
+          "levels": [
+            {
+              "level": 9,
+              "attribute": "CON",
+              "combat": "Ranger 9",
+              "talent": null,
+              "skills": ["Conjure Barrage"],
+              "tip": "Mais opção de área."
+            },
+            {
+              "level": 10,
+              "attribute": "CON",
+              "combat": "Ranger 10",
+              "talent": "Hide in Plain Sight",
+              "skills": ["Natural Explorer improvement"],
+              "tip": "Boa qualidade de vida e posicionamento."
+            },
+            {
+              "level": 11,
+              "attribute": "CON",
+              "combat": "Ranger 11",
+              "talent": "Volley",
+              "skills": ["Volley"],
+              "tip": "Excelente pico de late game."
+            },
+            {
+              "level": 12,
+              "attribute": "CON +2",
+              "combat": "Ranger 12",
+              "talent": "Alert",
+              "skills": ["Feat: Alert"],
+              "tip": "Agir cedo ajuda arqueiros a decidir a luta."
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "jaheira",
       "name": "Jaheira",
-      "icon": "🌿",
+      "icon": "🍃",
       "class": "Druid",
       "subclass": "Circle of the Land",
-      "role": "Suporte / DPS Mágico",
+      "role": "Control / Utility",
       "race": "Half-Elf",
-      "color": "#5a6a1a",
-      "description": "Druida versátil com magias de controle e dano elemental. Mais magias que Moon Druid.",
-      "levelSummary": {
-        "1": "Wild Shape e Healing Word.",
-        "2": "⭐ Land Druid! Natural Recovery.",
-        "3": "Circle Spells extras grátis.",
-        "4": "+2 SAB → 18.",
-        "5": "Call Lightning. Dano sustentado.",
-        "6": "Nature's Ward.",
-        "7": "Ice Storm. Slow em área.",
-        "8": "+2 SAB → 20.",
-        "9": "Wall of Stone.",
-        "10": "Nature's Sanctuary.",
-        "11": "Heal + Sunbeam.",
-        "12": "Build completa. Druida versátil."
-      }
+      "color": "#5fa36c",
+      "description": "Build detalhada para Jaheira com foco em progressão estável e forte sinergia de party.",
+      "primaryDamage": "Magical + Control",
+      "primaryAttribute": "Sabedoria",
+      "baseStats": {
+        "FOR": 10,
+        "DES": 14,
+        "CON": 14,
+        "INT": 10,
+        "SAB": 17,
+        "CAR": 10
+      },
+      "keyAbilities": [
+        "Natural Recovery",
+        "Spike Growth",
+        "Call Lightning",
+        "Wall of Fire",
+        "Heroes’ Feast"
+      ],
+      "keySpells": [
+        "Entangle",
+        "Spike Growth",
+        "Call Lightning",
+        "Plant Growth",
+        "Wall of Fire",
+        "Sunbeam"
+      ],
+      "equipment": [
+        "Staff",
+        "Spell DC gear",
+        "Concentration ring",
+        "Utility robes"
+      ],
+      "comboCombate": [
+        "Controle terreno com Spike Growth.",
+        "Natural Recovery ajuda a manter o ritmo mágico.",
+        "Call Lightning e Wall of Fire são ótimos em lutas longas.",
+        "Ela fecha bem parties físicas."
+      ],
+      "phases": [
+        {
+          "label": "Níveis 1–4 — Início",
+          "range": "1-4",
+          "tag": "early",
+          "levels": [
+            {
+              "level": 1,
+              "attribute": "SAB +1",
+              "combat": "Druid 1",
+              "talent": null,
+              "skills": ["Entangle", "Thunderwave"],
+              "tip": "Controle leve e utilidade desde o começo."
+            },
+            {
+              "level": 2,
+              "attribute": "SAB",
+              "combat": "Druid 2",
+              "talent": "Circle of the Land",
+              "skills": ["Natural Recovery"],
+              "tip": "Land Druid economiza recursos muito bem."
+            },
+            {
+              "level": 3,
+              "attribute": "SAB",
+              "combat": "Druid 3",
+              "talent": null,
+              "skills": ["Spike Growth", "Moonbeam"],
+              "tip": "Spike Growth segue fortíssimo."
+            },
+            {
+              "level": 4,
+              "attribute": "SAB +2",
+              "combat": "Druid 4",
+              "talent": "Ability Improvement",
+              "skills": ["Feat: +2 Wisdom"],
+              "tip": "Wisdom cedo melhora todo o controle."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 5–8 — Desenvolvimento",
+          "range": "5-8",
+          "tag": "mid",
+          "levels": [
+            {
+              "level": 5,
+              "attribute": "SAB",
+              "combat": "Druid 5",
+              "talent": null,
+              "skills": ["Call Lightning", "Plant Growth"],
+              "tip": "Mid game forte em controle e dano contínuo."
+            },
+            {
+              "level": 6,
+              "attribute": "SAB",
+              "combat": "Druid 6",
+              "talent": null,
+              "skills": ["Land’s Stride"],
+              "tip": "Mais mobilidade e conforto."
+            },
+            {
+              "level": 7,
+              "attribute": "SAB",
+              "combat": "Druid 7",
+              "talent": null,
+              "skills": ["Wall of Fire", "Ice Storm"],
+              "tip": "Mais ferramentas para mapas fechados."
+            },
+            {
+              "level": 8,
+              "attribute": "SAB +1 / CON +1",
+              "combat": "Druid 8",
+              "talent": "War Caster",
+              "skills": ["Feat: War Caster"],
+              "tip": "Ajuda bastante com concentração."
+            }
+          ]
+        },
+        {
+          "label": "Níveis 9–12 — Finalização",
+          "range": "9-12",
+          "tag": "late",
+          "levels": [
+            {
+              "level": 9,
+              "attribute": "SAB",
+              "combat": "Druid 9",
+              "talent": null,
+              "skills": ["Conjure Elemental", "Mass Cure Wounds"],
+              "tip": "Mais valor híbrido de summon e suporte."
+            },
+            {
+              "level": 10,
+              "attribute": "SAB",
+              "combat": "Druid 10",
+              "talent": null,
+              "skills": ["Improved Land utility"],
+              "tip": "Nível de refinamento e preparo final."
+            },
+            {
+              "level": 11,
+              "attribute": "SAB",
+              "combat": "Druid 11",
+              "talent": null,
+              "skills": ["Heroes’ Feast", "Sunbeam"],
+              "tip": "Late game utilitário muito forte."
+            },
+            {
+              "level": 12,
+              "attribute": "SAB +2",
+              "combat": "Druid 12",
+              "talent": "Alert",
+              "skills": ["Feat: Alert"],
+              "tip": "Agir cedo para controlar é excelente."
+            }
+          ]
+        }
+      ]
     }
   ]
 }
